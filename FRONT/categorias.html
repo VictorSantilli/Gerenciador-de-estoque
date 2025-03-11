@@ -14,12 +14,17 @@
     <!-- Style -->
     <link rel="stylesheet" href="./CSS/style.css">
 
-    <title>SmartStock</title>
+    <!--favcoin-->
+    <link rel="icon" href="./img/icone nav.png" type="image/png">
+    
+
+    <title>SmartStock | Categoria</title>
   </head>
   <body>
     <div id="navbar-container"></div>
+
     <main>
-            <h2 class="mb-3">Estoque</h2>
+            <h2 class="mb-3">Categoria</h2>
             <div class="row mb-5 d-flex align-items-center">
                 <div class="col-md-5">
                     <input id='input-busca' type="text" class="form-control" placeholder="Busque pelo nome ou descrição do produto"/>
@@ -31,12 +36,9 @@
                         </svg>
                     </button>
                 </div>
-                <div class="col-md-3 d-flex justify-content-center gap-2">
-                    <button class="btn btn-primary btn-lg">
-                        Adicionar entrada
-                    </button>
-                    <button class="btn btn-danger btn-lg">
-                        Adicionar saída
+                <div class="col-md-3 d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        Cadastrar Categoria
                     </button>
                 </div>
             </div>
@@ -46,11 +48,8 @@
                         <thead>
                             <tr>
                                 <th scope="col">Código</th>
-                                <th scope="col">Tipo</th>
-                                <th scope="col">Produto</th>
-                                <th scope="col">quantidade</th>
-                                <th scope="col">preço</th>
-                                <th scope="col">data</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Descrição</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-corpo">                            
@@ -60,25 +59,15 @@
                 <div class="col-md-3">
                     <div class="card">
                         <div class="card-body" style="height: 300px;">
-                            <div class="row">
-                                <h3>Movimentação</h3>
-
-                                <hr />
-
-                                <p class="fs-5">Qtd. entrada:</p>
-                                <p class="fs-5">Qtd. saida:</p>
-
-                            </div>
 
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="pagination d-flex align-items-center">
-                <button id="btn-anterior" class="btn btn-secondary me-2 btn-sm">Anterior</button>
+                <button id="btn-anterior" class="btn btn-secondary me-2">Anterior</button>
                 <span id="pagina-atual">Página 1</span>
-                <button id="btn-proximo" class="btn btn-secondary ms-2 btn-sm">Próximo</button>
+                <button id="btn-proximo" class="btn btn-secondary ms-2">Próximo</button>
             </div>
             
             
@@ -95,6 +84,39 @@
     <script src="./js/produtos.js"></script>
     <script src="./js/ui.js"></script>
     <script src="./js/eventos.js"></script>
-    <script src="./js/narvbar.js"></script>
+    <script src="js/narvbar.js"></script>
+
     </body>
+
+    <!-- Modal incluir Produto -->
+    <!-- Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Adicionar Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulário de Adição de Produto -->
+                    <form id="addProductForm">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="productName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategory" class="form-label">Descrição</label>
+                            <input type="select" class="form-select" id="productCategory" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary" id="saveProductButton">Salvar Categoria</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </html> 

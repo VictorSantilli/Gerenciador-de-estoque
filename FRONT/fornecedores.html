@@ -13,20 +13,20 @@
 
     <!-- Style -->
     <link rel="stylesheet" href="./CSS/style.css">
-    
+
     <!--favcoin-->
     <link rel="icon" href="./img/icone nav.png" type="image/png">
     
-    <title>SmartStock | Produtos</title>
+    <title>SmartStock | Fornecedores</title>
   </head>
   <body>
     <div id="navbar-container"></div>
 
     <main>
-            <h2 class="mb-3">Produtos</h2>
+            <h2 class="mb-3">Fornecedores</h2>
             <div class="row mb-5 d-flex align-items-center">
                 <div class="col-md-5">
-                    <input id='input-busca' type="text" class="form-control" placeholder="Busque pelo nome ou descrição do produto"/>
+                    <input id='input-busca' type="text" class="form-control" placeholder="Busque pelo nome ou CNPJ"/>
                 </div>
                 <div class="col-md-4">
                     <button id='btn-busca' class="btn btn-primary btn-lg d-flex align-items-center justify-content-center">
@@ -36,8 +36,8 @@
                     </button>
                 </div>
                 <div class="col-md-3 d-flex justify-content-center">
-                    <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                        Adicionar Produto
+                    <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#addFornecedor">
+                        Cadastrar Fornecedor
                     </button>
                 </div>
             </div>
@@ -48,9 +48,7 @@
                             <tr>
                                 <th scope="col">Código</th>
                                 <th scope="col">Nome</th>
-                                <th scope="col">Categoria</th>
-                                <th scope="col">Preço</th>
-                                <th scope="col">Qtd. Estoque</th>
+                                <th scope="col">CNPJ</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-corpo">                            
@@ -91,45 +89,40 @@
 
     <!-- Modal incluir Produto -->
     <!-- Modal -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="addFornecedor" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Adicionar Produto</h5>
+                    <h5 class="modal-title" id="addFornecedorModalLabel">Cadastrar Fornecedor</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Formulário de Adição de Produto -->
-                    <form id="addProductForm">
-                        <div class="mb-3">
-                            <label for="productName" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="productName" required>
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col"><input type="text" class="form-control" placeholder="Razão Social"></div>
+                            <div class="col"><input type="text" class="form-control" placeholder="CNPJ"></div>
                         </div>
-                        <div class="mb-3">
-                            <label for="productCategory" class="form-label">Categoria</label>
-                            <input type="select" class="form-select" id="productCategory" required>
+                        <div class="row mb-3">
+                            <div class="col"><input type="email" class="form-control" placeholder="E-mail"></div>
+                            <div class="col"><input type="text" class="form-control" placeholder="Telefone"></div>
                         </div>
-                        <div class="mb-3">
-                            <label for="productPrice" class="form-label">Preço</label>
-                            <input type="number" class="form-control" id="productPrice" step="0.01" required>
+                        <div class="row mb-3">
+                            <div class="col-md-3"><input type="text" class="form-control" placeholder="CEP"></div>
+                            <div class="col-md-2"><input type="text" class="form-control" placeholder="UF"></div>
+                            <div class="col-md-4"><input type="text" class="form-control" placeholder="Cidade"></div>
+                            <div class="col-md-3"><input type="text" class="form-control" placeholder="Bairro"></div>
                         </div>
-                        <div class="mb-3">
-                            <label for="productPrice" class="form-label">Unidade </label>
-                            <input type="number" class="form-control" id="productPrice" step="0.01" required>
+                        <div class="row mb-3">
+                            <div class="col"><input type="text" class="form-control" placeholder="Endereço"></div>
+                            <div class="col-md-3"><input type="text" class="form-control" placeholder="Número"></div>
                         </div>
-                        <div class="mb-3">
-                            <label for="fornecedor" class="form-label">Fornecedor</label>
-                            <input type="select" class="form-select" id="Fornecedor" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productStock" class="form-label">Quantidade em Estoque</label>
-                            <input type="number" class="form-control" id="productStock" required>
-                        </div>
+                        <div class="mb-3"><input type="text" class="form-control" placeholder="Complemento"></div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary" id="saveProductButton">Salvar Produto</button>
+                    <button type="submit" class="btn btn-primary" id="saveProductButton">Cadastrar Fornecedor</button>
                 </div>
             </div>
         </div>
