@@ -17,7 +17,7 @@
     <!-- Style -->
     <link rel="stylesheet" href="./CSS/style.css">
 
-    <title>SmartStock</title>
+    <title>SmartStock | Estoque</title>
 
     <style>
         /* Ajusta a altura e o alinhamento do Select2 para combinar com o Bootstrap */
@@ -56,24 +56,22 @@
                 <div class="col-md-5">
                     <input id='input-busca' type="text" class="form-control" placeholder="Busque pelo nome ou descrição do produto"/>
                 </div>
-                <div class="col-md-4">
-                    <button id='btn-busca' class="btn btn-primary btn-lg d-flex align-items-center justify-content-center">
+                <div class="col-md-4 d-flex gap-2">
+                    <button id='btn-busca' class="btn btn-primary btn-md d-flex align-items-center justify-content-center" style="background-color: #2C3E50;border: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                         </svg>
                     </button>
-                </div>
-                <div class="col-md-3 d-flex justify-content-center gap-2">
-                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalEntrada">
+                    <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#modalEntrada">
                         Incluir Entrada
                       </button>
-                      <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#modalSaida">
+                      <button type="button" class="btn btn-danger btn-md" data-bs-toggle="modal" data-bs-target="#modalSaida">
                         Incluir Saída
                       </button>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-9">
+                <div class="d-flex align-items-center">
                     <table class="table table-striped table-hover text-center">
                         <thead>
                             <tr>
@@ -88,22 +86,6 @@
                         <tbody id="tabela-corpo">                            
                         </tbody>
                     </table>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body" style="height: 300px;">
-                            <div class="row">
-                                <h3>Movimentação</h3>
-
-                                <hr />
-
-                                <p class="fs-5">Qtd. entrada:</p>
-                                <p class="fs-5">Qtd. saida:</p>
-
-                            </div>
-
-                        </div>
-                    </div>
                 </div>
             </div>
 
