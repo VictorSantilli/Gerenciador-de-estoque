@@ -13,7 +13,7 @@
         }
 
         .navbar-brand{
-            font-family: 'Lobster',cursive;
+            font-family: cursive;
             font-size: 30px;
         }
 
@@ -28,4 +28,12 @@
             padding: 30px;
         }
 
-
+        .efeito-borda {
+            display: inline-block;
+            border-radius: 10px;
+            padding-bottom: 5px; /* Espaço entre o texto e a borda */
+            border-bottom: 2px solid transparent; /* Define a espessura */
+            border-image-source: linear-gradient(to right, #2C3E50, transparent);
+            border-image-slice: 1;
+          }
+          
