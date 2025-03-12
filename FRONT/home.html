@@ -18,44 +18,42 @@
 
     <!--favcoin-->
     <link rel="icon" href="./img/icone nav.png" type="image/png">
-    
+
     <title>SmartStock | Home</title>
 </head>
 
 <body>
     <div id="navbar-container"></div>
 
-    <main class="d-flex align-items-center justify-content-center" style="height: 500px;">
-        <div class="text-center">
-            <div class="card mb-2" style="width: 350px;height: 350px;">
-                <div class="card-body">
-                    <a href="lancamento.html" style="text-decoration: none; color:#000;">
-                        <img src="./img/estoque.jpg" alt="estoque" width="100%" height="80%">
-                        <h5 class="fs-4">Estoque</h5>
-                    </a>
+    <main>
+        <div class="card" style="max-width: 500px;">
+            <div class="cardbody p-3">
+                <h2>Estoque</h2>
+                <hr />
+                <div class="container">
+                    <table class="table table-hover text-center"  id="tableListProducts">
+                        <thead >
+                            <tr class="fs-6">
+                                <th scope="col">Código</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Categoria</th>
+                                <th scope="col">Preço</th>
+                                <th scope="col">Qtd.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableListProducts-body" class="fs-6">
+                        
+                        </tbody>
+                    </table>
+                    <div>
+                        <a class="btn btn-secondary btn-md" href="#" role="button">Ver mais</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="text-center ms-5">
-            <div class="card mb-2" style="width: 350px;height: 350px;">
-                <div class="card-body">
-                    <a href="lancamento.html" style="text-decoration: none; color:#000;">
-                        <img src="./img/relatórios.jpg" alt="estoque" width="100%" height="80%">
-                        <h5 class="fs-4">Relatório</h5>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="text-center ms-5">
-            <div class="card mb-2" style="width: 350px;height: 350px;">
-                <div class="card-body">
-                    <a href="lancamento.html" style="text-decoration: none; color:#000;">
-                        <img src="./img/Fornecedores.jpg" alt="estoque" width="100%" height="80%">
-                        <h5 class="fs-4">Fornecedores</h5>
-                    </a>
-                </div>
-            </div>
-        </div>
+
+
+
 
     </main>
 
@@ -72,6 +70,9 @@
 
     <!-- navbar -->
     <script src="js/narvbar.js"></script>
+
+
+    <script src="js/home.js"></script>
 </body>
 
 </html>
