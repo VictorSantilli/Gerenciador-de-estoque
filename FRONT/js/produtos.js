@@ -55,7 +55,7 @@ document.getElementById('btn-busca').addEventListener('click', () => {
     const termoBusca = document.getElementById('input-busca').value.trim();
     buscarProdutos(0, termoBusca).then(produtos => {
         atualizarTabela(produtos);
-        paginaAtual = 0;
+        paginaAtual = 0;    
         atualizarPagina(0);
     });
 });
