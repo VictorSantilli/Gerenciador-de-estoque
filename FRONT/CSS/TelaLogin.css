@@ -19,8 +19,6 @@ body {
 
 form {
   padding: 50px;
-  background-color: white;
-  border-radius: 30px;
   display: flex;
   flex-direction: column;
   gap: 25px;

@@ -1,6 +1,8 @@
 const limite = 20; // Produtos por página
 let paginaAtual = 0;
 
+const token = localStorage.getItem('authToken');
+
 // Função para buscar produtos da API
 function buscarProdutos(pagina = 0, termoBusca = '') {
     const skip = pagina * limite;
