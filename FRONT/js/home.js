@@ -1,51 +1,64 @@
-const limite = 5; // Produtos por página
+document.addEventListener("DOMContentLoaded", function () {
+    fetchProducts(); // Carrega os produtos ao iniciar a página
+});
 
-// Função para buscar produtos da API
-function buscarProdutos(pagina = 0, termoBusca = '') {
-    const skip = pagina * limite;
-    let url = `https://dummyjson.com/products?limit=${limite}&skip=${skip}`;
+// Recupera o token armazenado no localStorage
+function getToken() {
+    return localStorage.getItem('authToken');
+}
 
-    if (termoBusca !== '') {
-        url = `https://dummyjson.com/products/search?q=${termoBusca}&limit=${limite}&skip=${skip}`;
+// Função para buscar a lista de produtos
+function fetchProducts() {
+    const token = getToken();
+    if (!token) {
+        alert("Sessão expirada! Faça login novamente.");
+        window.location.href = "TelaLogin.html";
+        return;
     }
 
-    return fetch(url)
-        .then(res => res.json())
-        .then(data => data.products)
-        .catch(erro => {
-            console.error('Erro ao buscar produtos:', erro);
-            return [];
-        });
+    fetch("http://localhost:8080/products/list", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        atualizarTabela(data);
+    })
+    .catch(error => {
+        console.error("Erro ao buscar produtos:", error);
+        alert("Erro ao carregar produtos. Tente novamente.");
+    });
 }
 
 // Atualiza a tabela com os produtos
 function atualizarTabela(produtos) {
-    const tabelaCorpo = document.getElementById('tableListProducts-body');
-    tabelaCorpo.innerHTML = '';
+    const tabela = document.getElementById("tableListProducts-body");
+    tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
 
     if (produtos.length === 0) {
-        tabelaCorpo.innerHTML = '<tr><td colspan="5">Nenhum produto encontrado.</td></tr>';
+        tabela.innerHTML = '<tr><td colspan="6">Nenhum produto encontrado.</td></tr>';
         return;
     }
 
     produtos.forEach(produto => {
-        const linha = document.createElement('tr');
-        linha.innerHTML = `
+        const row = document.createElement("tr");
+        row.innerHTML = `
             <td>${produto.id}</td>
-            <td>${produto.title}</td>
-            <td>${produto.category}</td>
-            <td>R$ ${produto.price.toFixed(2)}</td>
-            <td><img src="">${produto.stock}</td>
+            <td>${produto.name}</td>
+            <td>${produto.nameCategory}</td>
+            <td>${produto.quantity_stock}</td>
+            <td>${produto.unit_of_measure}</td>
+            <td>${produto.description}</td>
+           
         `;
-        tabelaCorpo.appendChild(linha);
+        tabela.appendChild(row);
     });
 }
-
-
-// Chama a função para carregar os produtos automaticamente ao abrir a página
-document.addEventListener('DOMContentLoaded', () => {
-    buscarProdutos(0).then(produtos => {
-        atualizarTabela(produtos);  // Atualiza a tabela com os produtos
-        atualizarPagina(0);         // Exibe a página inicial
-    });
-});

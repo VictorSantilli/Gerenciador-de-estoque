@@ -101,37 +101,6 @@ function createCategory(event) {
     });
 }
 
-
-//navegação paginação
-document.getElementById('btn-anterior').addEventListener('click', () => {
-    if (paginaAtual > 0) {
-        const termoBusca = document.getElementById('input-busca').value.trim();
-        buscarProdutos(paginaAtual - 1, termoBusca).then(produtos => {
-            atualizarTabela(produtos);
-            paginaAtual--;
-            atualizarPagina(paginaAtual);
-        });
-    }
-});
-
-document.getElementById('btn-proximo').addEventListener('click', () => {
-    const termoBusca = document.getElementById('input-busca').value.trim();
-    buscarProdutos(paginaAtual + 1, termoBusca).then(produtos => {
-        if (produtos.length > 0) {
-            atualizarTabela(produtos);
-            paginaAtual++;
-            atualizarPagina(paginaAtual);
-        }
-    });
-});
-
-// Atualiza a exibição da página
-function atualizarPagina(pagina) {
-    document.getElementById('pagina-atual').innerText = `Página ${pagina + 1}`;
-}
-
-
-
 // Função para buscar categoria pelo ID
 function fetchCategoryById() {
     const categoryId = document.getElementById('input-busca').value; // Obtém o ID inserido

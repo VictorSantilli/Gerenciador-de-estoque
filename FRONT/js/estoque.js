@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetchProducts(); // Carrega os produtos ao iniciar a página
+    fetchStock(); // Carrega os produtos ao iniciar a página
 });
 
 // Recupera o token armazenado no localStorage
@@ -8,7 +8,7 @@ function getToken() {
 }
 
 // Função para buscar a lista de produtos
-function fetchProducts() {
+function fetchStock() {
     const token = getToken();
     if (!token) {
         alert("Sessão expirada! Faça login novamente.");
@@ -16,7 +16,7 @@ function fetchProducts() {
         return;
     }
 
-    fetch("http://localhost:8080/products/list", {
+    fetch("http://localhost:8080/stockMovement/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -39,50 +39,56 @@ function fetchProducts() {
 }
 
 // Atualiza a tabela com os produtos
-function atualizarTabela(produtos) {
-    const tabela = document.getElementById("tableListProducts-body");
+function atualizarTabela(lancamentos) {
+    const tabela = document.getElementById("tabela-lancamento");
     tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
 
-    if (produtos.length === 0) {
+    if (lancamentos.length === 0) {
         tabela.innerHTML = '<tr><td colspan="6">Nenhum produto encontrado.</td></tr>';
         return;
     }
 
-    produtos.forEach(produto => {
+    lancamentos.forEach(lancamentos => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${produto.id}</td>
-            <td>${produto.name}</td>
-            <td>${produto.nameCategory}</td>
-            <td>${produto.quantity_min}</td>
-            <td>${produto.quantity_stock}</td>
-            <td>${produto.unit_of_measure}</td>
-            <td>${produto.description}</td>
+            <td>${lancamentos.id}</td>
+            <td>${lancamentos.movementType}</td>
+            <td>${lancamentos.productName}</td>
+            <td>${lancamentos.quantity}</td>
+            <td>${lancamentos.movementDate}</td>
+            <td>${lancamentos.observation}</td>
+            <td>${lancamentos.supplierName}</td>
            
         `;
         tabela.appendChild(row);
     });
 }
 
-// Função para cadastrar um novo produto
-function createProduct(event) {
+// Função para cadastrar um novo lançamento (entrada ou saída)
+function createStockMovement(event, type) {
     event.preventDefault(); // Evita que o formulário seja enviado normalmente
 
     // Captura os valores do formulário
-    const name = document.getElementById('productName').value;
-    const description = document.getElementById('description').value;
-    const quantity_min = parseInt(document.getElementById('quantityMin').value, 10);
-    const unit_of_measure = document.getElementById('unityMeasure').value;
-    const categoryId = parseInt(document.getElementById('productCategory').value, 10);
+    const productId = parseInt(document.getElementById('productId').value, 10);
+    const supplierId = parseInt(document.getElementById('selectSupplier').value, 10);
+    const quantity = parseInt(document.getElementById('inputQuatityMoviment').value, 10);
+    const price = parseFloat(document.getElementById('price').value);
+    const observation = document.getElementById('description').value;
 
-    // Monta o objeto JSON do produto
-    const productData = {
-        name: name,
-        description: description,
-        quantity_min: quantity_min,
-        unit_of_measure: unit_of_measure,
-        status: "ativo",
-        categoryId: categoryId
+    // Verifica se o tipo de movimento foi passado corretamente
+    if (!["entrada", "saida"].includes(type)) {
+        alert("Tipo de movimentação inválido.");
+        return;
+    }
+
+    // Monta o objeto JSON do movimento de estoque
+    const stockMovementData = {
+        productId: productId,
+        movementType: type, // "entrada" ou "saida"
+        quantity: quantity,
+        observation: observation,
+        supplierId: supplierId,
+        price: price
     };
 
     const token = getToken();
@@ -90,35 +96,35 @@ function createProduct(event) {
         alert("Sessão expirada! Faça login novamente.");
         window.location.href = "TelaLogin.html";
         return;
-    };
+    }
 
-    fetch("http://localhost:8080/products", {
+    fetch("http://localhost:8080/stockMovement", {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(productData)
+        body: JSON.stringify(stockMovementData)
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status} `);
+            throw new Error(`Erro na requisição: ${response.status}`);
         }
         return response.json();
     })
     .then(() => {
-        alert("Produto cadastrado com sucesso!");
-        document.getElementById('addProductForm').reset(); // Limpa o formulário
-        fetchProducts(); // Atualiza a lista de produtos
+        alert("Movimentação registrada com sucesso!");
+         // Limpa o formulário
+        fetchStockMovements(); // Atualiza a lista de movimentações
     })
     .catch(error => {
-        console.error("Erro ao criar produto:", error);
-        alert("Erro ao tentar cadastrar o produto. Tente novamente.");
+        console.error("Erro ao registrar movimentação:", error);
+        alert("Erro ao tentar registrar a movimentação. Tente novamente.");
     });
 }
 
 // Função para buscar categoria pelo ID
-function fetchProductById() {
+function fetchVById() {
     const categoryId = document.getElementById('input-busca').value; // Obtém o ID inserido
     if (!categoryId) {
         alert("Por favor, insira um ID.");
