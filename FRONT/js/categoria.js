@@ -100,3 +100,80 @@ function createCategory(event) {
         alert("Erro ao tentar criar categoria. Tente novamente.");
     });
 }
+
+
+//navegação paginação
+document.getElementById('btn-anterior').addEventListener('click', () => {
+    if (paginaAtual > 0) {
+        const termoBusca = document.getElementById('input-busca').value.trim();
+        buscarProdutos(paginaAtual - 1, termoBusca).then(produtos => {
+            atualizarTabela(produtos);
+            paginaAtual--;
+            atualizarPagina(paginaAtual);
+        });
+    }
+});
+
+document.getElementById('btn-proximo').addEventListener('click', () => {
+    const termoBusca = document.getElementById('input-busca').value.trim();
+    buscarProdutos(paginaAtual + 1, termoBusca).then(produtos => {
+        if (produtos.length > 0) {
+            atualizarTabela(produtos);
+            paginaAtual++;
+            atualizarPagina(paginaAtual);
+        }
+    });
+});
+
+// Atualiza a exibição da página
+function atualizarPagina(pagina) {
+    document.getElementById('pagina-atual').innerText = `Página ${pagina + 1}`;
+}
+
+
+
+// Função para buscar categoria pelo ID
+function fetchCategoryById() {
+    const categoryId = document.getElementById('input-busca').value; // Obtém o ID inserido
+    if (!categoryId) {
+        alert("Por favor, insira um ID.");
+        return;
+    }
+
+    // Recupera o token de autenticação do localStorage
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        console.error("Token não encontrado. Faça login novamente.");
+        alert("Sessão expirada! Faça login novamente.");
+        window.location.href = "TelaLogin.html"; // Redireciona para login se o token não existir
+        return;
+    }
+
+    // Fazendo a requisição GET para buscar a categoria pelo ID
+    fetch(`http://localhost:8080/categories/${categoryId}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erro ao buscar a categoria: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Exibe os dados da categoria se encontrados
+        if (data) {
+           //Atualiza a tabelo com os dados recebidos
+           atualizarTabela([data])
+        } else {
+            alert("Categoria não encontrada!");
+        }
+    })
+    .catch(error => {
+        console.error("Erro ao buscar categoria:", error);
+        alert("Erro ao tentar buscar a categoria. Tente novamente.");
+    });
+}
