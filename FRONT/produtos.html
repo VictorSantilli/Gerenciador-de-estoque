@@ -47,8 +47,10 @@
                                 <th scope="col">Código</th>
                                 <th scope="col">Nome</th>
                                 <th scope="col">Categoria</th>
-                                <th scope="col">Preço</th>
+                                <th scope="col">Descrição</th>
+                                <th scope="col">Qtd. mínima</th>
                                 <th scope="col">Qtd. Estoque</th>
+                                <th scope="col">Uni. Medida</th>
                             </tr>
                         </thead>
                         <tbody id="tableListProducts-body">                            
@@ -95,34 +97,34 @@
                             <input type="text" class="form-control" id="productName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="productCategory" class="form-label">Categoria</label>
-                            <input type="select" class="form-select" id="productCategory" required>
+                            <label for="description" class="form-label">Descrição</label>
+                            <input type="text" class="form-control" id="description" required>
                         </div>
                         <div class="mb-3">
-                            <label for="productPrice" class="form-label">Preço</label>
-                            <input type="number" class="form-control" id="productPrice" step="0.01" required>
+                            <label for="quantityMin" class="form-label">Quantidade mínima em estoque</label>
+                            <input type="number" class="form-control" id="quantityMin" required>
                         </div>
+                    
                         <div class="mb-3">
-                            <label for="productPrice" class="form-label">Unidade </label>
-                            <input type="number" class="form-control" id="productPrice" step="0.01" required>
+                            <label for="unityMeasure" class="form-label">Unidade de medida</label>
+                            <input type="text" class="form-control" id="unityMeasure" step="0.01" required>
                         </div>
+                    
+                        
                         <div class="mb-3">
-                            <label for="fornecedor" class="form-label">Fornecedor</label>
-                            <input type="select" class="form-select" id="Fornecedor" required>
+                            <label for="idCategory" class="form-label">Categoria</label>
+                            <input type="text" class="form-control" id="productCategory" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="productStock" class="form-label">Quantidade em Estoque</label>
-                            <input type="number" class="form-control" id="productStock" required>
-                        </div>
+                        
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary" id="saveProductButton">Salvar Produto</button>
+                    <button type="submit" class="btn btn-primary" id="saveProductButton" onclick="createProduct(event)">Salvar Produto</button>
                 </div>
             </div>
         </div>
     </div>
 
 
-</html> 
+</html>

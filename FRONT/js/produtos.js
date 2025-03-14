@@ -1,90 +1,118 @@
-const limite = 20; // Produtos por página
-let paginaAtual = 0;
+document.addEventListener("DOMContentLoaded", function () {
+    fetchProducts(); // Carrega os produtos ao iniciar a página
+});
 
-const token = localStorage.getItem('authToken');
+// Recupera o token armazenado no localStorage
+function getToken() {
+    return localStorage.getItem('authToken');
+}
 
-// Função para buscar produtos da API
-function buscarProdutos(pagina = 0, termoBusca = '') {
-    const skip = pagina * limite;
-    let url = `https://dummyjson.com/products?limit=${limite}&skip=${skip}`;
-
-    if (termoBusca !== '') {
-        url = `https://dummyjson.com/products/search?q=${termoBusca}&limit=${limite}&skip=${skip}`;
+// Função para buscar a lista de produtos
+function fetchProducts() {
+    const token = getToken();
+    if (!token) {
+        alert("Sessão expirada! Faça login novamente.");
+        window.location.href = "TelaLogin.html";
+        return;
     }
 
-    return fetch(url)
-        .then(res => res.json())
-        .then(data => data.products)
-        .catch(erro => {
-            console.error('Erro ao buscar produtos:', erro);
-            return [];
-        });
+    fetch("http://localhost:8080/products/list", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        atualizarTabela(data);
+    })
+    .catch(error => {
+        console.error("Erro ao buscar produtos:", error);
+        alert("Erro ao carregar produtos. Tente novamente.");
+    });
 }
 
 // Atualiza a tabela com os produtos
 function atualizarTabela(produtos) {
-    const tabelaCorpo = document.getElementById('tableListProducts-body');
-    tabelaCorpo.innerHTML = '';
+    const tabela = document.getElementById("tableListProducts-body");
+    tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
 
     if (produtos.length === 0) {
-        tabelaCorpo.innerHTML = '<tr><td colspan="5">Nenhum produto encontrado.</td></tr>';
+        tabela.innerHTML = '<tr><td colspan="6">Nenhum produto encontrado.</td></tr>';
         return;
     }
 
     produtos.forEach(produto => {
-        const linha = document.createElement('tr');
-        linha.innerHTML = `
+        const row = document.createElement("tr");
+        row.innerHTML = `
             <td>${produto.id}</td>
-            <td>${produto.title}</td>
-            <td>${produto.category}</td>
-            <td>R$ ${produto.price.toFixed(2)}</td>
-            <td><img src="">${produto.stock}</td>
+            <td>${produto.name}</td>
+            <td>${produto.nameCategory}</td>
+            <td>${produto.quantity_min}</td>
+            <td>${produto.quantity_stock}</td>
+            <td>${produto.unit_of_measure}</td>
+            <td>${produto.description}</td>
+           
         `;
-        tabelaCorpo.appendChild(linha);
+        tabela.appendChild(row);
     });
 }
 
+// Função para cadastrar um novo produto
+function createProduct(event) {
+    event.preventDefault(); // Evita que o formulário seja enviado normalmente
 
-// Chama a função para carregar os produtos automaticamente ao abrir a página
-document.addEventListener('DOMContentLoaded', () => {
-    buscarProdutos(0).then(produtos => {
-        atualizarTabela(produtos);  // Atualiza a tabela com os produtos
-        atualizarPagina(0);         // Exibe a página inicial
-    });
-});
+    // Captura os valores do formulário
+    const name = document.getElementById('productName').value;
+    const description = document.getElementById('description').value;
+    const quantity_min = parseInt(document.getElementById('quantityMin').value, 10);
+    const unit_of_measure = document.getElementById('unityMeasure').value;
+    const categoryId = parseInt(document.getElementById('productCategory').value, 10);
 
-document.getElementById('btn-busca').addEventListener('click', () => {
-    const termoBusca = document.getElementById('input-busca').value.trim();
-    buscarProdutos(0, termoBusca).then(produtos => {
-        atualizarTabela(produtos);
-        paginaAtual = 0;    
-        atualizarPagina(0);
-    });
-});
+    // Monta o objeto JSON do produto
+    const productData = {
+        name: name,
+        description: description,
+        quantity_min: quantity_min,
+        unit_of_measure: unit_of_measure,
+        status: "ativo",
+        categoryId: categoryId
+    };
 
-document.getElementById('btn-anterior').addEventListener('click', () => {
-    if (paginaAtual > 0) {
-        const termoBusca = document.getElementById('input-busca').value.trim();
-        buscarProdutos(paginaAtual - 1, termoBusca).then(produtos => {
-            atualizarTabela(produtos);
-            paginaAtual--;
-            atualizarPagina(paginaAtual);
-        });
-    }
-});
+    const token = getToken();
+    if (!token) {
+        alert("Sessão expirada! Faça login novamente.");
+        window.location.href = "TelaLogin.html";
+        return;
+    };
 
-document.getElementById('btn-proximo').addEventListener('click', () => {
-    const termoBusca = document.getElementById('input-busca').value.trim();
-    buscarProdutos(paginaAtual + 1, termoBusca).then(produtos => {
-        if (produtos.length > 0) {
-            atualizarTabela(produtos);
-            paginaAtual++;
-            atualizarPagina(paginaAtual);
+    fetch("http://localhost:8080/products", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(productData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status} `);
         }
+        return response.json();
+    })
+    .then(() => {
+        alert("Produto cadastrado com sucesso!");
+        document.getElementById('addProductForm').reset(); // Limpa o formulário
+        fetchProducts(); // Atualiza a lista de produtos
+    })
+    .catch(error => {
+        console.error("Erro ao criar produto:", error);
+        alert("Erro ao tentar cadastrar o produto. Tente novamente.");
     });
-});
-
-// Atualiza a exibição da página
-function atualizarPagina(pagina) {
-    document.getElementById('pagina-atual').innerText = `Página ${pagina + 1}`;
 }
