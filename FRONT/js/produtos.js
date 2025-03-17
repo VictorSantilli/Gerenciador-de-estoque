@@ -54,10 +54,10 @@ function atualizarTabela(produtos) {
             <td>${produto.id}</td>
             <td>${produto.name}</td>
             <td>${produto.nameCategory}</td>
+            <td>${produto.description}</td>
             <td>${produto.quantity_min}</td>
             <td>${produto.quantity_stock}</td>
             <td>${produto.unit_of_measure}</td>
-            <td>${produto.description}</td>
            
         `;
         tabela.appendChild(row);
@@ -118,12 +118,8 @@ function createProduct(event) {
 }
 
 // Função para buscar categoria pelo ID
-function fetchProductById() {
-    const categoryId = document.getElementById('input-busca').value; // Obtém o ID inserido
-    if (!categoryId) {
-        alert("Por favor, insira um ID.");
-        return;
-    }
+function fetchProduct() {
+    const searchQuery = document.getElementById('input-busca').value.trim(); // Obtém o valor inserido
 
     // Recupera o token de autenticação do localStorage
     const token = localStorage.getItem('authToken');
@@ -134,31 +130,45 @@ function fetchProductById() {
         return;
     }
 
-    // Fazendo a requisição GET para buscar a categoria pelo ID
-    fetch(`http://localhost:8080/products/${categoryId}`, {
+    let url;
+    // Se o campo estiver vazio, busca todos os produtos
+    if (!searchQuery) {
+        url = `http://localhost:8080/products/list`;
+    } 
+    // Se for um número, busca por ID
+    else if (!isNaN(searchQuery)) {
+        url = `http://localhost:8080/products/${searchQuery}`;
+    } 
+    // Caso contrário, busca por nome
+    else {
+        url = `http://localhost:8080/products/searchName?name=${encodeURIComponent(searchQuery)}`;
+    }
+
+    // Fazendo a requisição GET para buscar os produtos
+    fetch(url, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Erro ao buscar a categoria: ${response.status}`);
+            throw new Error(`Erro ao buscar o produto: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        // Exibe os dados da categoria se encontrados
+        // Exibe os produtos encontrados
         if (data) {
-           //Atualiza a tabelo com os dados recebidos
-           atualizarTabela([data])
+            atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
         } else {
-            alert("Categoria não encontrada!");
+            alert("Nenhum produto encontrado!");
         }
     })
     .catch(error => {
-        console.error("Erro ao buscar categoria:", error);
-        alert("Erro ao tentar buscar a categoria. Tente novamente.");
+        console.error("Erro ao buscar produto:", error);
+        alert("Erro ao tentar buscar os produtos. Tente novamente.");
     });
 }
+
