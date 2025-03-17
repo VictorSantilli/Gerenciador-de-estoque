@@ -9,7 +9,7 @@ function loginUser(event) {
         password: password
     };
 
-    fetch('http://localhost:8080/auth/login', {
+    fetch('http://localhost:8081/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -45,7 +45,7 @@ function registerUser(event) {
         password: password
     };
 
-    fetch('http://localhost:8080/auth/register', {
+    fetch('http://localhost:8081/auth/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

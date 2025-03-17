@@ -12,7 +12,7 @@ function fetchCategories() {
         return;
     }
 
-    fetch("http://localhost:8080/categories/list", {
+    fetch("http://localhost:8081/categories/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -75,7 +75,7 @@ function createCategory(event) {
     }
 
     // Enviando a requisição POST para a API
-    fetch('http://localhost:8080/categories', {
+    fetch('http://localhost:8081/categories', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
@@ -119,7 +119,7 @@ function fetchCategoryById() {
     }
 
     // Fazendo a requisição GET para buscar a categoria pelo ID
-    fetch(`http://localhost:8080/categories/${categoryId}`, {
+    fetch(`http://localhost:8081/categories/${categoryId}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação

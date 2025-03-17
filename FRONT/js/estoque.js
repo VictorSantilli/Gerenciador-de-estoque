@@ -16,7 +16,7 @@ function fetchStock() {
         return;
     }
 
-    fetch("http://localhost:8080/stockMovement/list", {
+    fetch("http://localhost:8081/stockMovement/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -98,7 +98,7 @@ function createStockMovement(event, type) {
         return;
     }
 
-    fetch("http://localhost:8080/stockMovement", {
+    fetch("http://localhost:8081/stockMovement", {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -141,7 +141,7 @@ function fetchVById() {
     }
 
     // Fazendo a requisição GET para buscar a categoria pelo ID
-    fetch(`http://localhost:8080/products/${categoryId}`, {
+    fetch(`http://localhost:8081/products/${categoryId}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
