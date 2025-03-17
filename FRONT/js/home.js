@@ -16,7 +16,7 @@ function fetchProducts() {
         return;
     }
 
-    fetch("http://localhost:8080/products/list", {
+    fetch("http://localhost:8081/products/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,

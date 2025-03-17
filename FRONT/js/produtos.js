@@ -16,7 +16,7 @@ function fetchProducts() {
         return;
     }
 
-    fetch("http://localhost:8080/products/list", {
+    fetch("http://localhost:8081/products/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -54,10 +54,10 @@ function atualizarTabela(produtos) {
             <td>${produto.id}</td>
             <td>${produto.name}</td>
             <td>${produto.nameCategory}</td>
+            <td>${produto.description}</td>
             <td>${produto.quantity_min}</td>
             <td>${produto.quantity_stock}</td>
             <td>${produto.unit_of_measure}</td>
-            <td>${produto.description}</td>
            
         `;
         tabela.appendChild(row);
@@ -92,7 +92,7 @@ function createProduct(event) {
         return;
     };
 
-    fetch("http://localhost:8080/products", {
+    fetch("http://localhost:8081/products", {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -135,7 +135,7 @@ function fetchProductById() {
     }
 
     // Fazendo a requisição GET para buscar a categoria pelo ID
-    fetch(`http://localhost:8080/products/${categoryId}`, {
+    fetch(`http://localhost:8081/products/${categoryId}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação

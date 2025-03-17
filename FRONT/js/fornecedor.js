@@ -13,7 +13,7 @@ function fetchSuppliers() {
         return;
     }
 
-    fetch("http://localhost:8080/supplier/list", {
+    fetch("http://localhost:8081/supplier/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -69,7 +69,7 @@ function fetchSupplierById() {
         return;
     }
 
-    fetch(`http://localhost:8080/supplier/${supplierId}`, {
+    fetch(`http://localhost:8081/supplier/${supplierId}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -136,7 +136,7 @@ function createSupplier(event) {
     }
 
     // Enviando a requisição POST para criar o fornecedor
-    fetch('http://localhost:8080/supplier', {
+    fetch('http://localhost:8081/supplier', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
