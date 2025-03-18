@@ -19,7 +19,8 @@ function loginUser(event) {
     .then(response => response.json())
     .then(data => {
         if (data.token) {
-            localStorage.setItem('authToken', data.token);  // Armazenando token
+            localStorage.setItem('authToken', data.token); 
+            localStorage.setItem('userName', data.name); // Armazenando token
             alert('Login realizado com sucesso!');
             window.location.href = 'home.html';  // Redireciona para a página de home
         } else {

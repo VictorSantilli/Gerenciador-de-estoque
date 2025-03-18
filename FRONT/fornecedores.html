@@ -26,10 +26,10 @@
             <h2 class="mb-3">Fornecedores</h2>
             <div class="row mb-5 d-flex align-items-center">
                 <div class="col-md-5">
-                    <input id='input-busca' type="text" class="form-control" placeholder="Busque pelo nome ou CNPJ"/>
+                    <input id='input-busca' type="text" class="form-control" placeholder="Busque pela Razão Social ou ID do fornecedor"/>
                 </div>
                 <div class="col-md-4 d-flex gap-2">
-                    <button id='btn-busca' onclick="fetchSupplierById()" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="background-color: #2C3E50;border: none;">
+                    <button id='btn-busca' onclick="fetchProduct()" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="background-color: #2C3E50;border: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                         </svg>
@@ -45,9 +45,9 @@
                         <thead>
                             <tr>
                                 <th scope="col">Código</th>
-                                <th scope="col">Nome</th>
+                                <th scope="col">Razão Social</th>
                                 <th scope="col">CNPJ</th>
-                                <th scope="col">phone</th>
+                                <th scope="col">telefone</th>
                                 <th scope="col">E-mail</th>
                             </tr>
                         </thead>
@@ -93,35 +93,43 @@
                         <!-- Linha para Razão Social e CNPJ -->
                         <div class="row mb-3">
                             <div class="col">
+                                <label for="supplier-name" class="form-label">Razão Social <span style="color: red;">*</span></label>
                                 <input id="supplier-name" type="text" class="form-control" placeholder="Razão Social" required>
                             </div>
                             <div class="col">
-                                <input id="supplier-cnpj" type="text" class="form-control" placeholder="CNPJ" required>
+                                <label for="supplier-cnpj" class="form-label">CNPJ <span style="color: red;">*</span></label>
+                                <input id="supplier-cnpj" type="text" class="form-control" placeholder="36519870000172" required>
                             </div>
                         </div>
                     
                         <!-- Linha para E-mail e Telefone -->
                         <div class="row mb-3">
                             <div class="col">
+                                <label for="supplier-email" class="form-label">E-mail <span style="color: red;">*</span></label>
                                 <input id="supplier-email" type="email" class="form-control" placeholder="E-mail" required>
                             </div>
                             <div class="col">
-                                <input id="supplier-phone" type="text" class="form-control" placeholder="Telefone" required>
+                                <label for="supplier-phone" class="form-label">Telefone <span style="color: red;">*</span></label>
+                                <input id="supplier-phone" type="text" class="form-control" placeholder="11956084352" required>
                             </div>
                         </div>
                     
                         <!-- Linha para CEP, UF, Cidade e Bairro -->
                         <div class="row mb-3">
                             <div class="col-md-3">
-                                <input id="supplier-cep" type="text" class="form-control" placeholder="CEP" required>
+                                <label for="supplier-cep" class="form-label">CEP <span style="color: red;">*</span></label>
+                                <input id="supplier-cep" type="text" class="form-control" placeholder="03784990" required>
                             </div>
                             <div class="col-md-2">
+                                <label for="supplier-state" class="form-label">Estado <span style="color: red;">*</span></label>
                                 <input id="supplier-state" type="text" class="form-control" placeholder="UF" required>
                             </div>
                             <div class="col-md-4">
+                                <label for="supplier-city" class="form-label">Cidade <span style="color: red;">*</span></label>
                                 <input id="supplier-city" type="text" class="form-control" placeholder="Cidade" required>
                             </div>
                             <div class="col-md-3">
+                                <label for="supplier-neighborhood" class="form-label">Bairro <span style="color: red;">*</span></label>
                                 <input id="supplier-neighborhood" type="text" class="form-control" placeholder="Bairro" required>
                             </div>
                         </div>
@@ -129,15 +137,18 @@
                         <!-- Linha para Endereço e Número -->
                         <div class="row mb-3">
                             <div class="col">
-                                <input id="supplier-public-place" type="text" class="form-control" placeholder="Endereço" required>
+                                <label for="supplier-public-place" class="form-label">Logradouro <span style="color: red;">*</span></label>
+                                <input id="supplier-public-place" type="text" class="form-control" placeholder="logradouro" required>
                             </div>
                             <div class="col-md-3">
+                                <label for="supplier-number" class="form-label">Numero <span style="color: red;">*</span></label>
                                 <input id="supplier-number" type="text" class="form-control" placeholder="Número" required>
                             </div>
                         </div>
                     
                         <!-- Complemento -->
                         <div class="mb-3">
+                            <label for="supplier-complement" class="form-label">Complemento</label>
                             <input id="supplier-complement" type="text" class="form-control" placeholder="Complemento">
                         </div>
                     

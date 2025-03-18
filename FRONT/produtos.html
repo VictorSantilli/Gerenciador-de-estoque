@@ -34,7 +34,7 @@
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                         </svg>
                     </button>
-                    <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <button id="btnAdicionar-Produto" type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#addProductModal">
                         Adicionar Produto
                     </button>
                 </div>
@@ -93,27 +93,35 @@
                     <!-- Formulário de Adição de Produto -->
                     <form id="addProductForm">
                         <div class="mb-3">
-                            <label for="productName" class="form-label">Nome</label>
+                            <label for="productName" class="form-label">Nome <span style="color: red;">*</span></label>
                             <input type="text" class="form-control" id="productName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Descrição</label>
+                            <label for="description" class="form-label">Descrição <span style="color: red;">*</span></label>
                             <input type="text" class="form-control" id="description" required>
                         </div>
                         <div class="mb-3">
-                            <label for="quantityMin" class="form-label">Quantidade mínima em estoque</label>
+                            <label for="quantityMin" class="form-label">Quantidade mínima em estoque <span style="color: red;">*</span></label>
                             <input type="number" class="form-control" id="quantityMin" required>
                         </div>
                     
                         <div class="mb-3">
-                            <label for="unityMeasure" class="form-label">Unidade de medida</label>
-                            <input type="text" class="form-control" id="unityMeasure" step="0.01" required>
+                            <label for="unityMeasure" class="form-label">Unidade de medida <span style="color: red;">*</span></label>
+                            <select type="text" class="form-select" id="unityMeasure" step="0.01" required>
+                                <option value="UN">Un</option>
+                                <option value="KG">Kg</option>
+                                <option value="Pç">Pç</option>
+                                <option value="L">L</option>
+                                <option value="mL">ml</option>
+                            </select>
                         </div>
                     
                         
                         <div class="mb-3">
-                            <label for="idCategory" class="form-label">Categoria</label>
-                            <input type="text" class="form-control" id="productCategory" required>
+                            <label for="idCategory" class="form-label">Categoria <span style="color: red;">*</span></label>
+                            <select type="text" class="form-select" id="productCategory"  required>
+                                <option value="" disabled selected>Selecione uma opção</option>
+                            </select>
                         </div>
                         
                     </form>

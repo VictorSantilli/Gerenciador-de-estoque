@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetchProducts(); // Carrega os produtos ao iniciar a página
+    fetchProducts();// Carrega os produtos ao iniciar a página
 });
 
 // Recupera o token armazenado no localStorage
@@ -71,14 +71,15 @@ function createProduct(event) {
     // Captura os valores do formulário
     const name = document.getElementById('productName').value;
     const description = document.getElementById('description').value;
-    const quantity_min = parseInt(document.getElementById('quantityMin').value, 10);
+    const quantity_min = parseInt(document.getElementById('quantityMin').value);
     const unit_of_measure = document.getElementById('unityMeasure').value;
-    const categoryId = parseInt(document.getElementById('productCategory').value, 10);
+    const categoryId = document.getElementById('productCategory').value;
 
     // Monta o objeto JSON do produto
     const productData = {
         name: name,
         description: description,
+        location: "string",
         quantity_min: quantity_min,
         unit_of_measure: unit_of_measure,
         status: "ativo",
@@ -172,3 +173,48 @@ function fetchProduct() {
     });
 }
 
+//Formulário
+async function carregarCategorias() {
+    const token = localStorage.getItem('authToken'); // Substitua pelo token real
+
+    try {
+        const response = await fetch("http://localhost:8080/categories/list", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na API: ${response.status}`);
+        }
+
+        const categorias = await response.json();
+        console.log("Categorias recebidas:", categorias); // Debug no console
+
+        const select = document.getElementById("productCategory");
+        select.innerHTML = '<option value="">Selecione uma categoria</option>'; // Reseta o select
+
+        if (!Array.isArray(categorias)) {
+            throw new Error("Os dados da API não são um array.");
+        }
+
+        categorias.forEach(categoria => {
+            if (!categoria.id || !categoria.name) {
+                console.warn("Categoria inválida:", categoria);
+                return;
+            }
+
+            const option = document.createElement("option");
+            option.value = categoria.id; // ID que será enviado ao backend
+            option.textContent = categoria.name; // Nome visível no select
+            select.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar categorias:", error);
+    }
+}
+
+document.getElementById("btnAdicionar-Produto").addEventListener("click", carregarCategorias);

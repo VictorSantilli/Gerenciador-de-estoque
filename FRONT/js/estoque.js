@@ -168,3 +168,134 @@ function fetchVById() {
         alert("Erro ao tentar buscar a categoria. Tente novamente.");
     });
 }
+
+
+function addProdutoNota(){
+    const productSelect = document.getElementById("productId");
+    const priceInput = document.getElementById("price");
+    const quantityInput = document.getElementById("inputQuatityMoviment");
+
+    const productId = productSelect.value;
+    const productName = productSelect.options[productSelect.selectedIndex].text;
+    const price = priceInput.value;
+    const quantity = quantityInput.value;
+
+    if (!productId || !price || !quantity) {
+        alert("Por favor, preencha todos os campos antes de adicionar.");
+        return;
+    }
+
+    const tableBody = document.getElementById("productList");
+
+    // Criar nova linha na tabela
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${productName}</td>
+        <td>R$ ${parseFloat(price).toFixed(2)}</td>
+        <td>${quantity}</td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="removerProduto(this)">X</button></td>
+    `;
+
+    tableBody.appendChild(row);
+
+    // Limpar campos após adicionar
+    productSelect.value = "";
+    priceInput.value = "";
+    quantityInput.value = "";
+};
+
+// Função para remover um produto da lista
+function removerProduto(button) {
+    button.closest("tr").remove();
+}
+
+
+async function carregarFornecedor() {
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const response = await fetch("http://localhost:8080/supplier/list", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na API: ${response.status}`);
+        }
+
+        const categorias = await response.json();
+        console.log("Categorias recebidas:", categorias); // Debug no console
+
+        const select = document.getElementById("selectSupplier");
+        select.innerHTML = '<option value="">Selecione um fornecedor</option>'; // Reseta o select
+
+        if (!Array.isArray(categorias)) {
+            throw new Error("Os dados da API não são um array.");
+        }
+
+        categorias.forEach(categoria => {
+            if (!categoria.id || !categoria.name) {
+                console.warn("Categoria inválida:", categoria);
+                return;
+            }
+
+            const option = document.createElement("option");
+            option.value = categoria.id; // ID que será enviado ao backend
+            option.textContent = categoria.name; // Nome visível no select
+            select.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar categorias:", error);
+    }
+}
+
+
+async function carregarProdutos() {
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const response = await fetch("http://localhost:8080/products/list", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na API: ${response.status}`);
+        }
+
+        const categorias = await response.json();
+        console.log("Categorias recebidas:", categorias); // Debug no console
+
+        const select = document.getElementById("productId");
+        select.innerHTML = '<option value="">Selecione um produto</option>'; // Reseta o select
+
+        if (!Array.isArray(categorias)) {
+            throw new Error("Os dados da API não são um array.");
+        }
+
+        categorias.forEach(categoria => {
+            if (!categoria.id || !categoria.name) {
+                console.warn("Categoria inválida:", categoria);
+                return;
+            }
+
+            const option = document.createElement("option");
+            option.value = categoria.id; // ID que será enviado ao backend
+            option.textContent = categoria.name; // Nome visível no select
+            select.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar categorias:", error);
+    }
+}
+
+document.getElementById("btnAdicionar-Produto").addEventListener("click", carregarProdutos);
+document.getElementById("btnAdicionar-Produto").addEventListener("click", carregarFornecedor);

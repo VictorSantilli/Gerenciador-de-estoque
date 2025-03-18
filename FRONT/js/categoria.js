@@ -102,12 +102,9 @@ function createCategory(event) {
 }
 
 // Função para buscar categoria pelo ID
-function fetchCategoryById() {
-    const categoryId = document.getElementById('input-busca').value; // Obtém o ID inserido
-    if (!categoryId) {
-        alert("Por favor, insira um ID.");
-        return;
-    }
+
+function fetchProduct() {
+    const searchQuery = document.getElementById('input-busca').value.trim(); // Obtém o valor inserido
 
     // Recupera o token de autenticação do localStorage
     const token = localStorage.getItem('authToken');
@@ -118,31 +115,44 @@ function fetchCategoryById() {
         return;
     }
 
-    // Fazendo a requisição GET para buscar a categoria pelo ID
-    fetch(`http://localhost:8080/categories/${categoryId}`, {
+    let url;
+    // Se o campo estiver vazio, busca todos os produtos
+    if (!searchQuery) {
+        url = `http://localhost:8080/categories/list`;
+    } 
+    // Se for um número, busca por ID
+    else if (!isNaN(searchQuery)) {
+        url = `http://localhost:8080/categories/${searchQuery}`;
+    } 
+    // Caso contrário, busca por nome
+    else {
+        url = `http://localhost:8080/categories/searchName?name=${encodeURIComponent(searchQuery)}`;
+    }
+
+    // Fazendo a requisição GET para buscar os produtos
+    fetch(url, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Erro ao buscar a categoria: ${response.status}`);
+            throw new Error(`Erro ao buscar o categories: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        // Exibe os dados da categoria se encontrados
+        // Exibe os produtos encontrados
         if (data) {
-           //Atualiza a tabelo com os dados recebidos
-           atualizarTabela([data])
+            atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
         } else {
-            alert("Categoria não encontrada!");
+            alert("Nenhum categories encontrado!");
         }
     })
     .catch(error => {
-        console.error("Erro ao buscar categoria:", error);
-        alert("Erro ao tentar buscar a categoria. Tente novamente.");
+        console.error("Erro ao buscar categories:", error);
+        alert("Erro ao tentar buscar os categories. Tente novamente.");
     });
 }
