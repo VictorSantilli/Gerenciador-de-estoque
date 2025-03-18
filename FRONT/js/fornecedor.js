@@ -108,7 +108,6 @@ function fetchProduct() {
     });
 }
 
-// Função para criar um fornecedor com o endereço
 async function createSupplier(event) {
     event.preventDefault(); // Evita que o formulário seja enviado de forma convencional
 
@@ -138,7 +137,7 @@ async function createSupplier(event) {
         number: number,
         neighborhood: neighborhood,
         city: city,
-        state: state,
+        state: state
     };
 
     // Recupera o token de autenticação do localStorage
@@ -152,11 +151,21 @@ async function createSupplier(event) {
     }
 
     try {
-        // Primeiro, cria o endereço
-        const addressId = await createAddress(addressData, token);
+        console.log("Token:", token);
 
-        // Agora, cria o fornecedor com o ID do endereço
-        await createSupplierWithAddress(supplierData, addressId, token);
+        // 🔹 Primeiro, cria o endereço com os dados reais
+        const addressId = await createAddress(addressData);
+
+        // 🔹 Se `createAddress()` falhar, interrompe o fluxo aqui
+        if (!addressId) {
+            alert("Erro ao criar o endereço. O fornecedor não pode ser criado sem um endereço válido.");
+            return;
+        }
+
+        console.log("Endereço criado com ID:", addressId);
+
+        // 🔹 Agora, cria o fornecedor com o ID do endereço
+        await createSupplierWithAddress(supplierData, addressId);
 
         alert("Fornecedor criado com sucesso!");
         window.location.reload(); // Recarrega a página ou pode atualizar a tabela
@@ -168,56 +177,67 @@ async function createSupplier(event) {
 }
 
 // Função para criar o endereço
-async function createAddress(addressData, token) {
+async function createAddress(addressData) {
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        console.error("Token ausente. Redirecionando para login...");
+        alert("Sessão expirada! Faça login novamente.");
+        window.location.href = "TelaLogin.html";
+        return null;
+    }
+
     try {
-        const token = localStorage.getItem('authToken');
         const response = await fetch('http://localhost:8080/address', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(addressData)
         });
 
         if (!response.ok) {
-            throw new Error(`Erro na criação do endereço: ${response.status}`);
+            console.error("Erro na criação do endereço:", response.status, response.statusText);
+            return null; // 🔹 Retorna `null` se falhar
         }
 
         const data = await response.json();
-        return data.id; // Retorna o ID do endereço criado
+        return data.id;
 
     } catch (error) {
         console.error("Erro ao criar endereço:", error);
-        throw error; // Propaga o erro para a função que chamou
+        return null; // 🔹 Retorna `null` se falhar
     }
 }
 
 // Função para criar o fornecedor com o ID do endereço
-async function createSupplierWithAddress(supplierData, addressId, token) {
+async function createSupplierWithAddress(supplierData, addressId) {
     try {
         const token = localStorage.getItem('authToken');
+
         const response = await fetch('http://localhost:8080/supplier', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
-                ...supplierData, // Dados do fornecedor
-                addressId: addressId // Inclui o ID do endereço
+                ...supplierData,
+                addressId: addressId
             })
         });
 
         if (!response.ok) {
-            throw new Error(`Erro ao criar fornecedor: ${response.status}`);
+            throw new Error(`Erro ao criar fornecedor: ${response.status} - ${response.statusText}`);
         }
 
-        const data = await response.json();
-        return data; // Retorna os dados do fornecedor criado
+        return await response.json();
 
     } catch (error) {
         console.error("Erro ao criar fornecedor com endereço:", error);
-        throw error; // Propaga o erro
+        throw error;
     }
 }
