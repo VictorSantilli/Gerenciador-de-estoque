@@ -16,7 +16,7 @@ function fetchStock() {
         return;
     }
 
-    fetch("http://localhost:8080/stockMovement/list", {
+    fetch("http://localhost:8080/invoices", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -34,7 +34,7 @@ function fetchStock() {
     })
     .catch(error => {
         console.error("Erro ao buscar produtos:", error);
-        alert("Erro ao carregar produtos. Tente novamente.");
+        alert("Erro ao carregar estoque. Tente novamente.");
     });
 }
 

@@ -29,7 +29,7 @@
                     <input id='input-busca' type="text" class="form-control" placeholder="Busque pela Razão Social ou ID do fornecedor"/>
                 </div>
                 <div class="col-md-4 d-flex gap-2">
-                    <button id='btn-busca' onclick="fetchProduct()" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="background-color: #2C3E50;border: none;">
+                    <button id='btn-busca' onclick="fetchSuppplier()" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="background-color: #2C3E50;border: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                         </svg>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="modal-body">
                     <!-- Formulário de Adição de Produto -->
-                    <form id="create-supplier-form" onsubmit="createSupplier(event)">
+                    <form id="create-supplier-form">
                         <!-- Linha para Razão Social e CNPJ -->
                         <div class="row mb-3">
                             <div class="col">
@@ -114,6 +114,10 @@
                             </div>
                         </div>
                     
+                        
+                    </form>
+
+                    <form id="FormEndereço">
                         <!-- Linha para CEP, UF, Cidade e Bairro -->
                         <div class="row mb-3">
                             <div class="col-md-3">
@@ -151,12 +155,13 @@
                             <label for="supplier-complement" class="form-label">Complemento</label>
                             <input id="supplier-complement" type="text" class="form-control" placeholder="Complemento">
                         </div>
-                    
+
+                        <button type="button" class="btn btn-primary btn-sm" id="saveAddressButton" onclick="cadastrarEndereco();">Salvar endereço</button>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary" id="saveSupplierButton" onclick="createSupplier(event)">Cadastrar Fornecedor</button>
+                    <button type="submit" class="btn btn-primary" id="saveSupplierButton" onclick="cadastrarFornecedor();">Cadastrar Fornecedor</button>
                 </div>
             </div>
         </div>

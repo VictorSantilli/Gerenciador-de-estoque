@@ -54,7 +54,7 @@ function atualizarTabela(fornecedores) {
 }
 
 // Função para buscar um fornecedor por ID
-function fetchProduct() {
+function fetchSuppplier() {
     const searchQuery = document.getElementById('input-busca').value.trim(); // Obtém o valor inserido
 
     // Recupera o token de autenticação do localStorage
@@ -108,136 +108,82 @@ function fetchProduct() {
     });
 }
 
-async function createSupplier(event) {
-    event.preventDefault(); // Evita que o formulário seja enviado de forma convencional
-
-    // Pegando os dados do formulário
-    const name = document.getElementById('supplier-name').value;
-    const phone = document.getElementById('supplier-phone').value;
-    const email = document.getElementById('supplier-email').value;
-    const cnpj = document.getElementById('supplier-cnpj').value;
-    const cep = document.getElementById('supplier-cep').value;
-    const publicPlace = document.getElementById('supplier-public-place').value;
-    const number = document.getElementById('supplier-number').value;
-    const neighborhood = document.getElementById('supplier-neighborhood').value;
-    const city = document.getElementById('supplier-city').value;
-    const state = document.getElementById('supplier-state').value;
-
-    // Preparando os dados para enviar
-    const supplierData = {
-        name: name,
-        phone: phone,
-        email: email,
-        cnpj: cnpj
+//Criar fornecedor
+// Função para cadastrar o endereço
+async function cadastrarEndereco() {
+    const token = localStorage.getItem('authToken'); // Obtém o token de validação
+    const enderecoData = {
+        cep: document.getElementById("supplier-cep").value,
+        public_place: document.getElementById("supplier-public-place").value,
+        number: document.getElementById("supplier-number").value,
+        neighborhood: document.getElementById("supplier-neighborhood").value,
+        city: document.getElementById("supplier-city").value,
+        state: document.getElementById("supplier-state").value,
     };
 
-    const addressData = {
-        cep: cep,
-        public_place: publicPlace,
-        number: number,
-        neighborhood: neighborhood,
-        city: city,
-        state: state
-    };
+    try {
+        const response = await fetch("http://localhost:8080/adress", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, // Inclui o token no cabeçalho
+            },
+            body: JSON.stringify(enderecoData),
+        });
 
-    // Recupera o token de autenticação do localStorage
-    const token = localStorage.getItem('authToken');
+        if (!response.ok) throw new Error("Erro ao cadastrar o endereço");
 
-    if (!token) {
-        console.error("Token não encontrado. Faça login novamente.");
-        alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html"; // Redireciona para login se o token não existir
+        const result = await response.json();
+        enderecoId = result.id; // Armazena o ID do endereço retornado pela API
+
+        alert("Endereço cadastrado com sucesso!");
+        document.getElementById("saveSupplierButton").disabled = false; // Habilita o botão de fornecedor
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+// Função para cadastrar o fornecedor
+async function cadastrarFornecedor() {
+    if (!enderecoId) {
+        alert("Cadastre o endereço antes de criar o fornecedor.");
         return;
     }
 
-    try {
-        console.log("Token:", token);
-
-        // 🔹 Primeiro, cria o endereço com os dados reais
-        const addressId = await createAddress(addressData);
-
-        // 🔹 Se `createAddress()` falhar, interrompe o fluxo aqui
-        if (!addressId) {
-            alert("Erro ao criar o endereço. O fornecedor não pode ser criado sem um endereço válido.");
-            return;
-        }
-
-        console.log("Endereço criado com ID:", addressId);
-
-        // 🔹 Agora, cria o fornecedor com o ID do endereço
-        await createSupplierWithAddress(supplierData, addressId);
-
-        alert("Fornecedor criado com sucesso!");
-        window.location.reload(); // Recarrega a página ou pode atualizar a tabela
-
-    } catch (error) {
-        console.error("Erro ao criar fornecedor:", error);
-        alert("Erro ao tentar criar fornecedor. Tente novamente.");
-    }
-}
-
-// Função para criar o endereço
-async function createAddress(addressData) {
-    const token = localStorage.getItem('authToken');
-
-    if (!token) {
-        console.error("Token ausente. Redirecionando para login...");
-        alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html";
-        return null;
-    }
+    const token = localStorage.getItem('authToken'); // Obtém o token de validação
+    const fornecedorData = {
+        name: document.getElementById("supplier-name").value,
+        phone: document.getElementById("supplier-phone").value,
+        email: document.getElementById("supplier-email").value,
+        cnpj: document.getElementById("supplier-cnpj").value,
+        adressId: enderecoId, // Vincula o ID do endereço cadastrado
+    };
 
     try {
-        const response = await fetch('http://localhost:8080/address', {
-            method: 'POST',
+        const response = await fetch("http://localhost:8080/supplier", {
+            method: "POST",
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, // Inclui o token no cabeçalho
             },
-            body: JSON.stringify(addressData)
+            body: JSON.stringify(fornecedorData),
         });
 
-        if (!response.ok) {
-            console.error("Erro na criação do endereço:", response.status, response.statusText);
-            return null; // 🔹 Retorna `null` se falhar
-        }
+        if (!response.ok) throw new Error("Erro ao cadastrar o fornecedor");
 
-        const data = await response.json();
-        return data.id;
-
+        alert("Fornecedor cadastrado com sucesso!");
+        location.reload(); // Recarrega a página após o cadastro
     } catch (error) {
-        console.error("Erro ao criar endereço:", error);
-        return null; // 🔹 Retorna `null` se falhar
+        alert(error.message);
     }
 }
 
-// Função para criar o fornecedor com o ID do endereço
-async function createSupplierWithAddress(supplierData, addressId) {
-    try {
-        const token = localStorage.getItem('authToken');
-
-        const response = await fetch('http://localhost:8080/supplier', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                ...supplierData,
-                addressId: addressId
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Erro ao criar fornecedor: ${response.status} - ${response.statusText}`);
-        }
-
-        return await response.json();
-
-    } catch (error) {
-        console.error("Erro ao criar fornecedor com endereço:", error);
-        throw error;
-    }
+// Função para configurar os eventos onclick
+function configurarEventos() {
+    document.getElementById("saveSupplierButton").disabled = true; // Inicialmente desativa o botão
 }
+
+// Chama a função para configurar os eventos assim que o DOM estiver pronto
+document.addEventListener("DOMContentLoaded", function () {
+    configurarEventos();
+});
