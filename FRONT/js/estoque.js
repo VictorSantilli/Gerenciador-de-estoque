@@ -340,7 +340,7 @@ function atualizarTabela() {
         row.innerHTML = `
             <td>${item.nome}</td>
             <td>R$ ${item.price.toFixed(2)}</td>
-            <td>${item.quantidade}</td>
+            <td>${item.quantity}</td>
             <td>${tipoMovimento === 'entrada' ? 'Entrada' : 'Saída'}</td> <!-- Coluna de tipo de movimento -->
             <td><button type="button" class="btn btn-danger btn-sm" onclick="removerProduto(${index})">X</button></td>
         `;

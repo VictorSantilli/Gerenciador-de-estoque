@@ -53,3 +53,10 @@ main {
 .link-home:hover{
     opacity: 0.5;
 }
+
+.link-download{
+    color:#3e68f0;
+}
+.link-download:hover{
+    color:#9fb4f894;
+}
