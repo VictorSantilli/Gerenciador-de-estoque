@@ -62,7 +62,7 @@ function registerUser(event) {
     .then(data => {
         if (data.name) {
             alert('Cadastro realizado com sucesso! eee');
-            window.location.href = 'TelaLogin.html';  // Redireciona para a página de login
+            window.location.href = 'index.html';  // Redireciona para a página de login
         } else {
             alert('Erro ao registrar usuário');
         }

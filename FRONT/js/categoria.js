@@ -8,7 +8,7 @@ function fetchCategories() {
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
         alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html";
+        window.location.href = "index.html";
         return;
     }
 
@@ -70,7 +70,7 @@ function createCategory(event) {
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
         alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html"; // Redireciona para login se o token não existir
+        window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
 
@@ -111,7 +111,7 @@ function fetchProduct() {
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
         alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html"; // Redireciona para login se o token não existir
+        window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
 

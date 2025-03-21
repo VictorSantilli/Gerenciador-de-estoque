@@ -12,7 +12,7 @@ function fetchProducts() {
     const token = getToken();
     if (!token) {
         alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html";
+        window.location.href = "index.html";
         return;
     }
 
@@ -89,7 +89,7 @@ function createProduct(event) {
     const token = getToken();
     if (!token) {
         alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html";
+        window.location.href = "index.html";
         return;
     };
 
@@ -127,7 +127,7 @@ function fetchProduct() {
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
         alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "TelaLogin.html"; // Redireciona para login se o token não existir
+        window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
 
