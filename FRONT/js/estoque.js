@@ -17,7 +17,7 @@ function fetchStock() {
     }
 
     // Requisição para as entradas
-    fetch("http://localhost:8080/invoices", {
+    fetch("https://api-controle-de-estoque-production.up.railway.app/invoices", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -32,7 +32,7 @@ function fetchStock() {
     })
     .then(entradas => {
         // Requisição para as saídas
-        fetch("http://localhost:8080/stock-output", {
+        fetch("https://api-controle-de-estoque-production.up.railway.app/stock-output", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -132,7 +132,7 @@ function fetchVById() {
     }
 
     // Fazendo a requisição GET para buscar a categoria pelo ID
-    fetch(`http://localhost:8080/products/${categoryId}`, {
+    fetch(`https://api-controle-de-estoque-production.up.railway.app/products/${categoryId}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
@@ -164,7 +164,7 @@ async function carregarFornecedor() {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch("http://localhost:8080/supplier/list", {
+        const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/supplier/list", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -207,7 +207,7 @@ async function carregarProdutos() {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch("http://localhost:8080/products/list", {
+        const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/products/list", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -250,7 +250,7 @@ async function carregarProdutosSaida() {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch("http://localhost:8080/products/list", {
+        const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/products/list", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -380,7 +380,7 @@ function atualizarTabela() {
 
             // Criar os itens da nota fiscal e obter os IDs retornados
             for (const item of itensNotaFiscal) {
-                const response = await fetch("http://localhost:8080/invoice-items", {
+                const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/invoice-items", {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`, // Enviando token corretamente
@@ -408,7 +408,7 @@ function atualizarTabela() {
                 invoiceItemIds: invoiceItemIds
             };
 
-            const invoiceResponse = await fetch("http://localhost:8080/invoices", {
+            const invoiceResponse = await fetch("https://api-controle-de-estoque-production.up.railway.app/invoices", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`, // Enviando token corretamente
@@ -512,7 +512,7 @@ async function processarSaidaEstoque() {
 
         // Buscar quantidade atual no estoque
         try {
-            const estoqueResponse = await fetch(`http://localhost:8080/products/${productId}`, {
+            const estoqueResponse = await fetch(`https://api-controle-de-estoque-production.up.railway.app/products/${productId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -541,7 +541,7 @@ async function processarSaidaEstoque() {
 
             console.log("Enviando saída de estoque:", payload);
 
-            const response = await fetch("http://localhost:8080/stock-output", {
+            const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/stock-output", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

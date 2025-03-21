@@ -9,7 +9,7 @@ function loginUser(event) {
         password: password
     };
 
-    fetch('http://localhost:8080/auth/login', {
+    fetch('https://api-controle-de-estoque-production.up.railway.app/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -46,7 +46,7 @@ function registerUser(event) {
         password: password
     };
 
-    fetch('http://localhost:8080/auth/register', {
+    fetch('https://api-controle-de-estoque-production.up.railway.app/auth/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

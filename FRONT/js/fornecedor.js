@@ -13,7 +13,7 @@ function fetchSuppliers() {
         return;
     }
 
-    fetch("http://localhost:8080/supplier/list", {
+    fetch("https://api-controle-de-estoque-production.up.railway.app/supplier/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -69,15 +69,15 @@ function fetchSuppplier() {
     let url;
     // Se o campo estiver vazio, busca todos os produtos
     if (!searchQuery) {
-        url = `http://localhost:8080/supplier/list`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/supplier/list`;
     } 
     // Se for um número, busca por ID
     else if (!isNaN(searchQuery)) {
-        url = `http://localhost:8080/supplier/${searchQuery}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/supplier/${searchQuery}`;
     } 
     // Caso contrário, busca por nome
     else {
-        url = `http://localhost:8080/supplier/searchName?name=${encodeURIComponent(searchQuery)}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/supplier/searchName?name=${encodeURIComponent(searchQuery)}`;
     }
 
     // Fazendo a requisição GET para buscar os produtos
@@ -122,7 +122,7 @@ async function cadastrarEndereco() {
     };
 
     try {
-        const response = await fetch("http://localhost:8080/adress", {
+        const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/adress", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -160,7 +160,7 @@ async function cadastrarFornecedor() {
     };
 
     try {
-        const response = await fetch("http://localhost:8080/supplier", {
+        const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/supplier", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

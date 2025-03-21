@@ -16,7 +16,7 @@ function fetchProducts() {
         return;
     }
 
-    fetch("http://localhost:8080/products/list", {
+    fetch("https://api-controle-de-estoque-production.up.railway.app/products/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -93,7 +93,7 @@ function createProduct(event) {
         return;
     };
 
-    fetch("http://localhost:8080/products", {
+    fetch("https://api-controle-de-estoque-production.up.railway.app/products", {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -134,15 +134,15 @@ function fetchProduct() {
     let url;
     // Se o campo estiver vazio, busca todos os produtos
     if (!searchQuery) {
-        url = `http://localhost:8080/products/list`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/products/list`;
     } 
     // Se for um número, busca por ID
     else if (!isNaN(searchQuery)) {
-        url = `http://localhost:8080/products/${searchQuery}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/products/${searchQuery}`;
     } 
     // Caso contrário, busca por nome
     else {
-        url = `http://localhost:8080/products/searchName?name=${encodeURIComponent(searchQuery)}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/products/searchName?name=${encodeURIComponent(searchQuery)}`;
     }
 
     // Fazendo a requisição GET para buscar os produtos
@@ -178,7 +178,7 @@ async function carregarCategorias() {
     const token = localStorage.getItem('authToken'); // Substitua pelo token real
 
     try {
-        const response = await fetch("http://localhost:8080/categories/list", {
+        const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/categories/list", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho

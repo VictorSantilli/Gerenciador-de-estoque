@@ -12,7 +12,7 @@ function fetchCategories() {
         return;
     }
 
-    fetch("http://localhost:8080/categories/list", {
+    fetch("https://api-controle-de-estoque-production.up.railway.app/categories/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -75,7 +75,7 @@ function createCategory(event) {
     }
 
     // Enviando a requisição POST para a API
-    fetch('http://localhost:8080/categories', {
+    fetch('https://api-controle-de-estoque-production.up.railway.app/categories', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
@@ -118,15 +118,15 @@ function fetchProduct() {
     let url;
     // Se o campo estiver vazio, busca todos os produtos
     if (!searchQuery) {
-        url = `http://localhost:8080/categories/list`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/categories/list`;
     } 
     // Se for um número, busca por ID
     else if (!isNaN(searchQuery)) {
-        url = `http://localhost:8080/categories/${searchQuery}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/categories/${searchQuery}`;
     } 
     // Caso contrário, busca por nome
     else {
-        url = `http://localhost:8080/categories/searchName?name=${encodeURIComponent(searchQuery)}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/categories/searchName?name=${encodeURIComponent(searchQuery)}`;
     }
 
     // Fazendo a requisição GET para buscar os produtos
