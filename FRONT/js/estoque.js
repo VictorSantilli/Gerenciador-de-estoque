@@ -434,15 +434,6 @@ function atualizarTabela() {
         }
 }
 
-
-
-
-
-
-
-
-
-
 document.getElementById("btnAdicionar-Produto").addEventListener("click", carregarProdutos);
 document.getElementById("btnAdicionar-Produto").addEventListener("click", carregarFornecedor);
 
@@ -491,19 +482,17 @@ function atualizarModal() {
 // Função de saída de estoque (a ser implementada)
 async function processarSaidaEstoque() {
     const token = getToken(); // Obtém o token de autenticação
-    const tableRows = document.querySelectorAll("#productList tr");
 
-    if (tableRows.length === 0) {
+    if (itensNotaFiscal.length === 0) {
         alert("Adicione pelo menos um produto para registrar a saída.");
         return;
     }
 
-    for (let row of tableRows) {
-        const cells = row.getElementsByTagName("td");
-        const productName = cells[0].innerText;
-        const price = cells[1].innerText.replace("R$ ", "").trim();
-        const quantity = parseInt(cells[2].innerText, 10);
-        const productId = row.dataset.productId; // ID salvo na linha
+    for (let item of itensNotaFiscal) {
+        const productId = item.productId;  // Obtendo o ID do produto
+        const productName = item.nome;
+        const quantity = item.quantity;  // Usando a quantidade que foi registrada em itensNotaFiscal
+        const price = item.price;  // Usando o preço registrado
 
         if (!productId || isNaN(quantity) || quantity <= 0) {
             console.error("Erro: Produto ou quantidade inválida.");
@@ -525,7 +514,7 @@ async function processarSaidaEstoque() {
             }
 
             const produto = await estoqueResponse.json();
-            const estoqueDisponivel = produto.quantidadeEstoque; // Ajuste conforme a resposta da API
+            const estoqueDisponivel = produto.quantidadeEstoque;
 
             if (quantity > estoqueDisponivel) {
                 alert(`Estoque insuficiente para o produto ${productName}! Disponível: ${estoqueDisponivel}`);
