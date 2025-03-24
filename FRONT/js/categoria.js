@@ -36,7 +36,7 @@ function fetchCategories() {
 
 function atualizarTabela(categorias) {
     const tabela = document.getElementById("tabela-categorias");
-    tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
+    tabela.innerHTML = "";
 
     categorias.forEach(categoria => {
         const row = document.createElement("tr");
@@ -44,11 +44,20 @@ function atualizarTabela(categorias) {
             <td>${categoria.id}</td>
             <td>${categoria.name}</td>
             <td>${categoria.description}</td>
+            <td><button class="btn btn-sm btn-danger">Delete</button></td>
         `;
+
+        // Pega o botão e adiciona o evento passando o ID
+        const btnExcluir = row.querySelector("button");
+        btnExcluir.addEventListener("click", () => {
+            if (confirm(`Deseja excluir a categoria "${categoria.name}"?`)) {
+                excluirCategoria(categoria.id); // ✅ ID passado aqui
+            }
+        });
+
         tabela.appendChild(row);
     });
 }
-
 // Cadastro
 // Função para enviar o POST e criar a categoria
 function createCategory(event) {
@@ -154,5 +163,33 @@ function fetchProduct() {
     .catch(error => {
         console.error("Erro ao buscar categories:", error);
         alert("Erro ao tentar buscar os categories. Tente novamente.");
+    });
+}
+
+function excluirCategoria(idCategoria) {
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        alert("Sessão expirada! Faça login novamente.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    fetch(`https://api-controle-de-estoque-production.up.railway.app/categories/${idCategoria}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status}`);
+        }
+        alert("Categoria excluída com sucesso!");
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error("Erro ao excluir categoria:", error);
+        alert("Erro ao tentar excluir categoria.");
     });
 }
