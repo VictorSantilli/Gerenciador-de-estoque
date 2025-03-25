@@ -554,9 +554,12 @@ async function processarSaidaEstoque() {
                 throw new Error(`Erro na API ao registrar saída do produto ${item.nome}: ${response.status}`);
             }
 
-            console.log(`✅ Saída registrada com sucesso para ${item.nome}`);
+            alert(`✅ Saída registrada com sucesso para ${item.nome}`);
+            setTimeout(() => location.reload(), 500); // espera 500ms antes de recarregar
         } catch (error) {
             console.error("❌ Erro ao processar saída de estoque:", error);
         }
     }
+
+
 }
