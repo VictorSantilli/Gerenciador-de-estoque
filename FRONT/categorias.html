@@ -107,5 +107,35 @@
         </div>
     </div>
 
+    <!-- Modal de Edição -->
+<div class="modal fade" id="modalEditarCategoria" tabindex="-1" aria-labelledby="modalEditarCategoriaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarCategoriaLabel">Editar Categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário de Edição -->
+                <form id="formEditarCategoria">
+                    <input type="hidden" id="inputIdCategoria"> <!-- ID da Categoria (invisível) -->
+                    <div class="mb-3">
+                        <label for="inputNomeCategoria" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="inputNomeCategoria" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputDescricaoCategoria" class="form-label">Descrição</label>
+                        <input type="text" class="form-control" id="inputDescricaoCategoria" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="salvarEdicaoBtn" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 </html> 

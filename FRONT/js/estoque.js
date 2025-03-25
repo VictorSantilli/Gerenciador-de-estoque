@@ -479,7 +479,6 @@ function atualizarModal() {
     }
 }
 
-// Função de saída de estoque (a ser implementada)
 async function processarSaidaEstoque() {
     const token = getToken(); // Obtém o token de autenticação
 
@@ -488,19 +487,17 @@ async function processarSaidaEstoque() {
         return;
     }
 
+    let itensComEstoqueInsuficiente = []; // Lista para armazenar produtos com estoque insuficiente
+
+    // 🔎 Primeira etapa: Verificar estoque de todos os produtos antes de qualquer requisição de saída
     for (let item of itensNotaFiscal) {
-        const productId = item.productId;  // Obtendo o ID do produto
+        const productId = item.productId;
         const productName = item.nome;
-        const quantity = item.quantity;  // Usando a quantidade que foi registrada em itensNotaFiscal
-        const price = item.price;  // Usando o preço registrado
+        const quantity = item.quantity;
 
-        if (!productId || isNaN(quantity) || quantity <= 0) {
-            console.error("Erro: Produto ou quantidade inválida.");
-            continue;
-        }
-
-        // Buscar quantidade atual no estoque
         try {
+            console.log(`🔎 Verificando estoque do produto: ${productName} (ID: ${productId})`);
+
             const estoqueResponse = await fetch(`https://api-controle-de-estoque-production.up.railway.app/products/${productId}`, {
                 method: "GET",
                 headers: {
@@ -514,21 +511,35 @@ async function processarSaidaEstoque() {
             }
 
             const produto = await estoqueResponse.json();
-            const estoqueDisponivel = produto.quantidadeEstoque;
+            const estoqueDisponivel = produto.quantity_stock;
+
+            console.log(`📊 Estoque disponível para ${productName}: ${estoqueDisponivel}, Solicitado: ${quantity}`);
 
             if (quantity > estoqueDisponivel) {
-                alert(`Estoque insuficiente para o produto ${productName}! Disponível: ${estoqueDisponivel}`);
-                continue; // Pula para o próximo item
+                console.warn(`⚠ Estoque insuficiente para ${productName}`);
+                itensComEstoqueInsuficiente.push(`${productName} (Disponível: ${estoqueDisponivel}, Solicitado: ${quantity})`);
             }
+        } catch (error) {
+            console.error(`❌ Erro ao verificar estoque para ${productName}:`, error);
+        }
+    }
 
-            // Monta a requisição de saída
-            const payload = {
-                productId: parseInt(productId),
-                quantity: quantity,
-                observation: `Saída de estoque do produto: ${productName}`
-            };
+    // 🚨 Se houver itens com estoque insuficiente, exibir alerta e interromper o processo
+    if (itensComEstoqueInsuficiente.length > 0) {
+        alert("Os seguintes produtos têm estoque insuficiente:\n\n" + itensComEstoqueInsuficiente.join("\n"));
+        return; // Interrompe a função sem enviar requisições de saída
+    }
 
-            console.log("Enviando saída de estoque:", payload);
+    // ✅ Segunda etapa: Enviar requisições de saída apenas para produtos com estoque suficiente
+    for (let item of itensNotaFiscal) {
+        const payload = {
+            productId: parseInt(item.productId),
+            quantity: item.quantity,
+            observation: `Saída de estoque do produto: ${item.nome}`
+        };
+
+        try {
+            console.log("📤 Enviando saída de estoque:", payload);
 
             const response = await fetch("https://api-controle-de-estoque-production.up.railway.app/stock-output", {
                 method: "POST",
@@ -540,15 +551,12 @@ async function processarSaidaEstoque() {
             });
 
             if (!response.ok) {
-                throw new Error(`Erro na API ao registrar saída do produto ${productName}: ${response.status}`);
+                throw new Error(`Erro na API ao registrar saída do produto ${item.nome}: ${response.status}`);
             }
 
-            console.log(`✅ Saída registrada com sucesso para ${productName}`);
-
+            console.log(`✅ Saída registrada com sucesso para ${item.nome}`);
         } catch (error) {
-            console.error("Erro ao processar saída de estoque:", error);
+            console.error("❌ Erro ao processar saída de estoque:", error);
         }
     }
-
-    alert("Saída de estoque registrada com sucesso!");
 }
