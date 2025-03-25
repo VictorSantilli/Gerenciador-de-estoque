@@ -17,6 +17,10 @@ body {
     font-size: 30px;
 }
 
+.nav2{
+    border: none;
+}
+
 a,
 .nav-link,
 .perfil {
