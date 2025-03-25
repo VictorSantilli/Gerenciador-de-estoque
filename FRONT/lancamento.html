@@ -36,7 +36,7 @@
                     placeholder="Busque pelo ID da movimentação" />
             </div>
             <div class="col-md-4 d-flex gap-2">
-                <button id='btn-busca' class="btn btn-primary btn-md d-flex align-items-center justify-content-center"
+                <button onclick="fetchVById()" id='btn-busca' class="btn btn-primary btn-md d-flex align-items-center justify-content-center"
                     style="background-color: #2C3E50;border: none;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-search" viewBox="0 0 16 16">
@@ -58,9 +58,8 @@
                             <th scope="col">Tipo de Movimento</th>
                             <th scope="col">Nº nota</th>
                             <th scope="col">Fornecedor</th>
-                            <th scope="col">Data de emissão</th>
+                            <th scope="col">Data de registro</th>
                             <th scope="col">Valor total</th> 
-                            <th scope="col">Ver detalhes</th>
                         </tr>
                     </thead>
                     <tbody id="tabela-lancamento">

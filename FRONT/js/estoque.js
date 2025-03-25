@@ -116,49 +116,79 @@ function atualizarTabelaPage(lancamentos) {
 
 // Função para buscar pelo ID
 function fetchVById() {
-    const categoryId = document.getElementById('input-busca').value; // Obtém o ID inserido
-    if (!categoryId) {
-        alert("Por favor, insira um ID.");
-        return;
-    }
+    const searchValue = document.getElementById('input-busca').value.trim();
 
-    // Recupera o token de autenticação do localStorage
     const token = localStorage.getItem('authToken');
     if (!token) {
-        console.error("Token não encontrado. Faça login novamente.");
         alert("Sessão expirada! Faça login novamente.");
-        window.location.href = "index.html"; // Redireciona para login se o token não existir
+        window.location.href = "index.html";
         return;
     }
 
-    // Fazendo a requisição GET para buscar a categoria pelo ID
-    fetch(`https://api-controle-de-estoque-production.up.railway.app/products/${categoryId}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`, // Adiciona o token de autenticação
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Erro ao buscar a categoria: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Exibe os dados da categoria se encontrados
-        if (data) {
-           //Atualiza a tabelo com os dados recebidos
-           atualizarTabela([data])
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+
+    // Se o campo estiver vazio, busca todas as entradas e saídas
+    if (!searchValue) {
+        Promise.all([
+            fetch('https://api-controle-de-estoque-production.up.railway.app/stock-input', {
+                method: 'GET',
+                headers
+            }).then(res => res.ok ? res.json() : []),
+
+            fetch('https://api-controle-de-estoque-production.up.railway.app/stock-output', {
+                method: 'GET',
+                headers
+            }).then(res => res.ok ? res.json() : [])
+        ])
+        .then(([entradas, saidas]) => {
+            const resultados = [...entradas, ...saidas];
+            if (resultados.length > 0) {
+                atualizarTabelaPage(resultados);
+            } else {
+                alert("Nenhum lançamento encontrado.");
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao buscar todos os lançamentos:", error);
+            alert("Erro ao tentar buscar todos os lançamentos.");
+        });
+
+        return;
+    }
+
+    // Quando há valor no input, buscar todas as entradas e a saída por ID
+    Promise.all([
+        fetch('https://api-controle-de-estoque-production.up.railway.app/invoices', {
+            method: 'GET',
+            headers
+        }).then(res => res.ok ? res.json() : []),
+
+        fetch(`https://api-controle-de-estoque-production.up.railway.app/stock-output/${searchValue}`, {
+            method: 'GET',
+            headers
+        }).then(res => res.ok ? res.json() : null)
+    ])
+    .then(([entradas, saida]) => {
+        const entradasFiltradas = entradas.filter(e => e.invoiceNumber === searchValue);
+        const resultados = [...entradasFiltradas];
+        if (saida) resultados.push(saida);
+
+        if (resultados.length > 0) {
+            atualizarTabelaPage(resultados);
         } else {
-            alert("Categoria não encontrada!");
+            alert("Nenhuma entrada ou saída encontrada para o valor informado.");
         }
     })
     .catch(error => {
-        console.error("Erro ao buscar categoria:", error);
-        alert("Erro ao tentar buscar a categoria. Tente novamente.");
+        console.error("Erro ao buscar lançamentos:", error);
+        alert("Erro ao tentar buscar os dados. Tente novamente.");
     });
 }
+
+
 
 async function carregarFornecedor() {
     const token = localStorage.getItem('authToken');
