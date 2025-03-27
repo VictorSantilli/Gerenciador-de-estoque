@@ -7,7 +7,7 @@ function fetchCategories() {
 
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Erro na validação do Token!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html";
         return;
     }
@@ -32,7 +32,7 @@ function fetchCategories() {
     })
     .catch(error => {
         console.error("Erro ao buscar categorias:", error);
-        alert("Erro ao carregar categorias. Tente novamente.");
+        showModal("Erro" , "Erro ao carregar categorias. Tente novamente.");
     });
 }
 
@@ -73,7 +73,7 @@ function createCategory(event) {
 
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Erro na validação do Token!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
@@ -95,13 +95,15 @@ function createCategory(event) {
     })
     .then(data => {
         // Exibe mensagem de sucesso
-        alert("Categoria criada com sucesso!");
+        showModal("Sucesso!!","Categoria criada com sucesso!");
         // Opcionalmente, redireciona ou limpa o formulário
-        window.location.reload(); // Recarrega a página ou pode atualizar a tabela
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000); // Recarrega a página ou pode atualizar a tabela
     })
     .catch(error => {
         console.error("Erro ao criar categoria:", error);
-        alert("Erro ao tentar criar categoria. Tente novamente.");
+        showModal("Erro!","Erro ao tentar criar categoria. Tente novamente.");
     });
 }
 
@@ -114,7 +116,7 @@ function fetchProduct() {
     const token = localStorage.getItem('authToken');
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Erro na validação do Token!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
@@ -152,13 +154,23 @@ function fetchProduct() {
         if (data) {
             atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
         } else {
-            alert("Nenhum categories encontrado!");
+            showModal("Erro!!","Nenhum categories encontrado!");
         }
     })
     .catch(error => {
         console.error("Erro ao buscar categories:", error);
-        alert("Erro ao tentar buscar os categories. Tente novamente.");
+        showModal("Erro","Erro ao tentar buscar os categories. Tente novamente.");
     });
+}
+
+function showModal(title, message) {
+    // Define os textos dinâmicos
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerText = message;
+
+    // Mostra a modal
+    const modal = new bootstrap.Modal(document.getElementById('customModal'));
+    modal.show();
 }
 
 

@@ -21,7 +21,6 @@ function loginUser(event) {
         if (data.token) {
             localStorage.setItem('authToken', data.token); 
             localStorage.setItem('userName', data.name); // Armazenando token
-            alert('Login realizado com sucesso!');
             window.location.href = 'home.html';  // Redireciona para a página de home
         } else {
             alert('Erro no login. Verifique suas credenciais.');
@@ -61,8 +60,14 @@ function registerUser(event) {
     })
     .then(data => {
         if (data.name) {
-            alert('Cadastro realizado com sucesso! eee');
-            window.location.href = 'index.html';  // Redireciona para a página de login
+            // Exibe a modal de sucesso
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+    
+            // Redireciona após 2 segundos (ajustável)
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
         } else {
             alert('Erro ao registrar usuário');
         }

@@ -88,7 +88,7 @@ function createProduct(event) {
 
     const token = getToken();
     if (!token) {
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Token expirado!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html";
         return;
     };
@@ -108,13 +108,15 @@ function createProduct(event) {
         return response.json();
     })
     .then(() => {
-        alert("Produto cadastrado com sucesso!");
+        showModal("Sucesso!!","Produto cadastrado com sucesso!");
         document.getElementById('addProductForm').reset(); // Limpa o formulário
-        fetchProducts(); // Atualiza a lista de produtos
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);  // Atualiza a lista de produtos
     })
     .catch(error => {
         console.error("Erro ao criar produto:", error);
-        alert("Erro ao tentar cadastrar o produto. Tente novamente.");
+        showModal("Erro!","Erro ao tentar cadastrar o produto. Tente novamente.");
     });
 }
 
@@ -126,7 +128,7 @@ function fetchProduct() {
     const token = localStorage.getItem('authToken');
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Token Expirado!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
@@ -164,12 +166,12 @@ function fetchProduct() {
         if (data) {
             atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
         } else {
-            alert("Nenhum produto encontrado!");
+            showModal("Erro!","Nenhum produto encontrado!");
         }
     })
     .catch(error => {
         console.error("Erro ao buscar produto:", error);
-        alert("Erro ao tentar buscar os produtos. Tente novamente.");
+        showModal("Erro!!","Erro ao tentar buscar os produtos. Tente novamente.");
     });
 }
 
@@ -218,3 +220,13 @@ async function carregarCategorias() {
 }
 
 document.getElementById("btnAdicionar-Produto").addEventListener("click", carregarCategorias);
+
+function showModal(title, message) {
+    // Define os textos dinâmicos
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerText = message;
+
+    // Mostra a modal
+    const modal = new bootstrap.Modal(document.getElementById('customModal'));
+    modal.show();
+}
