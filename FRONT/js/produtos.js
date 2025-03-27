@@ -11,7 +11,7 @@ function getToken() {
 function fetchProducts() {
     const token = getToken();
     if (!token) {
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Token expirado!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html";
         return;
     }
@@ -34,7 +34,7 @@ function fetchProducts() {
     })
     .catch(error => {
         console.error("Erro ao buscar produtos:", error);
-        alert("Erro ao carregar produtos. Tente novamente.");
+        showModal("Erro!!","Erro ao carregar produtos. Tente novamente.");
     });
 }
 

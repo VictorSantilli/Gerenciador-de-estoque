@@ -8,7 +8,7 @@ function fetchSuppliers() {
 
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Token expirado","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html";
         return;
     }
@@ -31,7 +31,7 @@ function fetchSuppliers() {
     })
     .catch(error => {
         console.error("Erro ao buscar fornecedores:", error);
-        alert("Erro ao carregar fornecedores. Tente novamente.");
+        showModal("erro","Erro ao carregar fornecedores. Tente novamente.");
     });
 }
 
@@ -61,7 +61,7 @@ function fetchSuppplier() {
     const token = localStorage.getItem('authToken');
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Toke expirado!!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
@@ -99,12 +99,12 @@ function fetchSuppplier() {
         if (data) {
             atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
         } else {
-            alert("Nenhum supplier encontrado!");
+            showModal("Erro","Nenhum supplier encontrado!");
         }
     })
     .catch(error => {
         console.error("Erro ao buscar supplier:", error);
-        alert("Erro ao tentar buscar os supplier. Tente novamente.");
+        showModal("Erro","Erro ao tentar buscar os supplier. Tente novamente.");
     });
 }
 
@@ -136,17 +136,17 @@ async function cadastrarEndereco() {
         const result = await response.json();
         enderecoId = result.id; // Armazena o ID do endereço retornado pela API
 
-        alert("Endereço cadastrado com sucesso!");
+        showModal("Sucesso","Endereço cadastrado com sucesso!");
         document.getElementById("saveSupplierButton").disabled = false; // Habilita o botão de fornecedor
     } catch (error) {
-        alert(error.message);
+        showModal("erro!",error.message);
     }
 }
 
 // Função para cadastrar o fornecedor
 async function cadastrarFornecedor() {
     if (!enderecoId) {
-        alert("Cadastre o endereço antes de criar o fornecedor.");
+        showModal("Atenção","Cadastre o endereço antes de criar o fornecedor.");
         return;
     }
 
@@ -171,10 +171,10 @@ async function cadastrarFornecedor() {
 
         if (!response.ok) throw new Error("Erro ao cadastrar o fornecedor");
 
-        alert("Fornecedor cadastrado com sucesso!");
+        showModal("Sucesso!!","Fornecedor cadastrado com sucesso!");
         location.reload(); // Recarrega a página após o cadastro
     } catch (error) {
-        alert(error.message);
+        showModal("erro",error.message);
     }
 }
 
@@ -187,3 +187,13 @@ function configurarEventos() {
 document.addEventListener("DOMContentLoaded", function () {
     configurarEventos();
 });
+
+function showModal(title, message) {
+    // Define os textos dinâmicos
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerText = message;
+
+    // Mostra a modal
+    const modal = new bootstrap.Modal(document.getElementById('customModal'));
+    modal.show();
+}

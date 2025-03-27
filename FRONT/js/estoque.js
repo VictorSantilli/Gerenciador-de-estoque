@@ -11,7 +11,7 @@ function getToken() {
 function fetchStock() {
     const token = getToken();
     if (!token) {
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Token expirado!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html";
         return;
     }
@@ -52,12 +52,12 @@ function fetchStock() {
         })
         .catch(error => {
             console.error("Erro ao buscar saídas:", error);
-            alert("Erro ao carregar saídas. Tente novamente.");
+            showModal("Erro","Erro ao carregar saídas. Tente novamente.");
         });
     })
     .catch(error => {
         console.error("Erro ao buscar entradas:", error);
-        alert("Erro ao carregar entradas. Tente novamente.");
+        showModal("Erro","Erro ao carregar entradas. Tente novamente.");
     });
 }
 
@@ -120,7 +120,7 @@ function fetchVById() {
 
     const token = localStorage.getItem('authToken');
     if (!token) {
-        alert("Sessão expirada! Faça login novamente.");
+        showModal("Token expirado!","Sessão expirada! Faça login novamente.");
         window.location.href = "index.html";
         return;
     }
@@ -148,12 +148,12 @@ function fetchVById() {
             if (resultados.length > 0) {
                 atualizarTabelaPage(resultados);
             } else {
-                alert("Nenhum lançamento encontrado.");
+                showModal("","Nenhum lançamento encontrado.");
             }
         })
         .catch(error => {
             console.error("Erro ao buscar todos os lançamentos:", error);
-            alert("Erro ao tentar buscar todos os lançamentos.");
+            showModal("Erro","Erro ao tentar buscar todos os lançamentos.");
         });
 
         return;
@@ -179,12 +179,12 @@ function fetchVById() {
         if (resultados.length > 0) {
             atualizarTabelaPage(resultados);
         } else {
-            alert("Nenhuma entrada ou saída encontrada para o valor informado.");
+            showModal("Erro","Nenhuma entrada ou saída encontrada para o valor informado.");
         }
     })
     .catch(error => {
         console.error("Erro ao buscar lançamentos:", error);
-        alert("Erro ao tentar buscar os dados. Tente novamente.");
+        showModal("Erro","Erro ao tentar buscar os dados. Tente novamente.");
     });
 }
 
@@ -332,7 +332,7 @@ function addProdutoNota() {
     const quantity = parseInt(quantityInput.value);
 
     if (!productId || isNaN(price) || isNaN(quantity) || quantity <= 0) {
-        alert("Preencha todos os campos corretamente!");
+        showModal("Preencha corretamente","Preencha todos os campos corretamente!");
         return;
     }
 
@@ -392,7 +392,7 @@ function atualizarTabela() {
         }
 
         if (itensNotaFiscal.length === 0) {
-            alert("Adicione pelo menos um item antes de criar a nota fiscal!");
+            showModal("Preencha corretamente","Adicione pelo menos um item antes de criar a nota fiscal!");
             return;
         }
 
@@ -400,7 +400,7 @@ function atualizarTabela() {
         const supplierId = document.getElementById("selectSupplier").value;
 
         if (!invoiceNumber || !supplierId) {
-            alert("Preencha o número da nota e selecione um fornecedor!");
+            showModal("Preencha corretamente","Preencha o número da nota e selecione um fornecedor!");
             return;
         }
 
@@ -451,7 +451,7 @@ function atualizarTabela() {
                 throw new Error("Erro ao criar a nota fiscal.");
             }
 
-            alert("Nota Fiscal criada com sucesso!");
+            showModal("Sucesso!!","Nota Fiscal criada com sucesso!");
 
             // Limpar tudo após o envio
             itensNotaFiscal = [];
@@ -460,7 +460,7 @@ function atualizarTabela() {
             atualizarTabela();
         } catch (error) {
             console.error(error);
-            alert("Erro ao criar a nota fiscal.");
+            showModal("Erro","Erro ao criar a nota fiscal.");
         }
 }
 
@@ -513,7 +513,7 @@ async function processarSaidaEstoque() {
     const token = getToken(); // Obtém o token de autenticação
 
     if (itensNotaFiscal.length === 0) {
-        alert("Adicione pelo menos um produto para registrar a saída.");
+        showModal("Preencha corretamente","Adicione pelo menos um produto para registrar a saída.");
         return;
     }
 
@@ -556,7 +556,7 @@ async function processarSaidaEstoque() {
 
     // 🚨 Se houver itens com estoque insuficiente, exibir alerta e interromper o processo
     if (itensComEstoqueInsuficiente.length > 0) {
-        alert("Os seguintes produtos têm estoque insuficiente:\n\n" + itensComEstoqueInsuficiente.join("\n"));
+        showModal("Erro!!","Os seguintes produtos têm estoque insuficiente:\n\n" + itensComEstoqueInsuficiente.join("\n"));
         return; // Interrompe a função sem enviar requisições de saída
     }
 
@@ -584,7 +584,7 @@ async function processarSaidaEstoque() {
                 throw new Error(`Erro na API ao registrar saída do produto ${item.nome}: ${response.status}`);
             }
 
-            alert(`✅ Saída registrada com sucesso para ${item.nome}`);
+            showModal("Sucesso",`✅ Saída registrada com sucesso para ${item.nome}`);
             setTimeout(() => location.reload(), 500); // espera 500ms antes de recarregar
         } catch (error) {
             console.error("❌ Erro ao processar saída de estoque:", error);
@@ -592,4 +592,13 @@ async function processarSaidaEstoque() {
     }
 
 
+}
+function showModal(title, message) {
+    // Define os textos dinâmicos
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerText = message;
+
+    // Mostra a modal
+    const modal = new bootstrap.Modal(document.getElementById('customModal'));
+    modal.show();
 }
