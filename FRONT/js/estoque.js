@@ -17,7 +17,7 @@ function fetchStock() {
     }
 
     // Requisição para as entradas
-    fetch("https://api-controle-de-estoque-production.up.railway.app/invoices", {
+    fetch("https://api-controle-de-estoque-production.up.railway.app/invoices/list", {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
