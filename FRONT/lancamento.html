@@ -23,18 +23,18 @@
     <!--favcoin-->
     <link rel="icon" href="./img/icone nav.png" type="image/png">
 
-    <title>SmartStock | Estoque</title>
+    <title>SmartStock | Movimentações</title>
 </head>
 
 <body>
     <div id="navbar-container"></div>
 
     <main>
-        <h2 class="mb-3">Estoque</h2>
+        <h2 class="mb-3 efeito-borda">Movimentações</h2>
         <div class="row mb-5 d-flex align-items-center">
             <div class="col-md-5">
                 <input id='input-busca' type="text" class="form-control"
-                    placeholder="Busque pelo numero da nota da movimentação" />
+                    placeholder="Busque pelo número da nota" />
             </div>
             <div class="col-md-4 d-flex gap-2">
                 <button onclick="fetchVById()" id='btn-busca' class="btn btn-primary btn-md d-flex align-items-center justify-content-center"
@@ -56,8 +56,8 @@
                 <table class="table table-striped table-hover text-center">
                     <thead>
                         <tr>
-                            <th scope="col">Tipo de Movimento</th>
-                            <th scope="col">Nº nota</th>
+                            <th scope="col">Tipo de movimento</th>
+                            <th scope="col">Nº da nota</th>
                             <th scope="col">Fornecedor</th>
                             <th scope="col">Data de registro</th>
                             <th scope="col">Valor total</th> 
