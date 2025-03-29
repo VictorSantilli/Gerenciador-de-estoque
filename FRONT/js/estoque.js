@@ -136,80 +136,99 @@ document.getElementById("btn-anterior").addEventListener("click", () => {
 
 
 // Função para cadastrar um novo lançamento (entrada ou saída)
-
 // Função para buscar pelo ID
+// Função para buscar pelo ID (invoiceNumber)
 function fetchVById() {
     const searchValue = document.getElementById('input-busca').value.trim();
-
     const token = localStorage.getItem('authToken');
+
     if (!token) {
-        showModal("Token expirado!","Sessão expirada! Faça login novamente.");
+        console.error("Token não encontrado. Faça login novamente.");
+        showModal("Erro na validação do Token!", "Sessão expirada! Faça login novamente.");
         window.location.href = "index.html";
         return;
     }
 
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
+    console.log("🔎 Buscando pelo valor:", searchValue);
 
-    // Se o campo estiver vazio, busca todas as entradas e saídas
+    let urls = [
+        'https://api-controle-de-estoque-production.up.railway.app/invoices/list',
+        'https://api-controle-de-estoque-production.up.railway.app/stock-output'
+    ];
+
     if (!searchValue) {
-        Promise.all([
-            fetch('https://api-controle-de-estoque-production.up.railway.app/stock-input', {
+        // Busca todas as entradas e saídas quando o campo de pesquisa está vazio
+        Promise.all(urls.map(url =>
+            fetch(url, {
                 method: 'GET',
-                headers
-            }).then(res => res.ok ? res.json() : []),
-
-            fetch('https://api-controle-de-estoque-production.up.railway.app/stock-output', {
-                method: 'GET',
-                headers
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             }).then(res => res.ok ? res.json() : [])
-        ])
+        ))
         .then(([entradas, saidas]) => {
+            console.log("✅ Entradas e saídas recebidas:", entradas, saidas);
             const resultados = [...entradas, ...saidas];
+
             if (resultados.length > 0) {
                 atualizarTabelaPage(resultados);
             } else {
-                showModal("","Nenhum lançamento encontrado.");
+                showModal("Erro", "Nenhum lançamento encontrado.");
             }
         })
         .catch(error => {
-            console.error("Erro ao buscar todos os lançamentos:", error);
-            showModal("Erro","Erro ao tentar buscar todos os lançamentos.");
+            console.error("⚠ Erro ao buscar lançamentos:", error);
+            showModal("Erro", "Erro ao tentar buscar os dados. Tente novamente.");
         });
 
-        return;
+    } else {
+        // Busca por invoiceNumber nas entradas e saídas
+        fetch(urls[0], {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.ok ? res.json() : [])
+        .then(invoices => {
+            console.log("📥 Dados de invoices recebidos:", invoices);
+            let entradasFiltradas = invoices.filter(e => e.invoiceNumber === searchValue);
+
+            if (entradasFiltradas.length > 0) {
+                atualizarTabelaPage(entradasFiltradas);
+            } else {
+                console.log("🔎 Nota não encontrada em invoices. Buscando por ID na saída...");
+
+                // Se não encontrou nos invoices, busca diretamente na saída pelo ID
+                return fetch(`https://api-controle-de-estoque-production.up.railway.app/stock-output/${searchValue}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.ok ? res.json() : null)
+                .then(saida => {
+                    if (saida) {
+                        console.log("✅ Nota de saída encontrada:", saida);
+                        atualizarTabelaPage([saida]);
+                    } else {
+                        showModal("Erro", "Nenhuma entrada ou saída encontrada para o valor informado.");
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error("⚠ Erro ao buscar lançamentos:", error);
+            showModal("Erro", "Erro ao tentar buscar os dados. Tente novamente.");
+        });
     }
-
-    // Quando há valor no input, buscar todas as entradas e a saída por ID
-    Promise.all([
-        fetch('https://api-controle-de-estoque-production.up.railway.app/invoices', {
-            method: 'GET',
-            headers
-        }).then(res => res.ok ? res.json() : []),
-
-        fetch(`https://api-controle-de-estoque-production.up.railway.app/stock-output/${searchValue}`, {
-            method: 'GET',
-            headers
-        }).then(res => res.ok ? res.json() : null)
-    ])
-    .then(([entradas, saida]) => {
-        const entradasFiltradas = entradas.filter(e => e.invoiceNumber === searchValue);
-        const resultados = [...entradasFiltradas];
-        if (saida) resultados.push(saida);
-
-        if (resultados.length > 0) {
-            atualizarTabelaPage(resultados);
-        } else {
-            showModal("Erro","Nenhuma entrada ou saída encontrada para o valor informado.");
-        }
-    })
-    .catch(error => {
-        console.error("Erro ao buscar lançamentos:", error);
-        showModal("Erro","Erro ao tentar buscar os dados. Tente novamente.");
-    });
 }
+
+
+
 
 
 

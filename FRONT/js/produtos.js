@@ -31,7 +31,7 @@ function fetchProducts() {
         return response.json();
     })
     .then(data => {
-        atualizarProdutos(data);  // Chama a função que atualiza a lista de produtos e renderiza a tabela
+        atualizarTabela(data);  // Chama a função que atualiza a lista de produtos e renderiza a tabela
     })
     .catch(error => {
         console.error("Erro ao buscar produtos:", error);
@@ -194,33 +194,35 @@ function createProduct(event) {
 }
 
 // Função para buscar categoria pelo ID
-function fetchProduct() {
+function fetchCategory() {
     const searchQuery = document.getElementById('input-busca').value.trim(); // Obtém o valor inserido
 
     // Recupera o token de autenticação do localStorage
     const token = localStorage.getItem('authToken');
     if (!token) {
         console.error("Token não encontrado. Faça login novamente.");
-        showModal("Token Expirado!","Sessão expirada! Faça login novamente.");
+        showModal("Token Expirado!", "Sessão expirada! Faça login novamente.");
         window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
 
     let url;
-    // Se o campo estiver vazio, busca todos os produtos
+    // Se o campo estiver vazio, busca todas as categorias
     if (!searchQuery) {
-        url = `https://api-controle-de-estoque-production.up.railway.app/products/list`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/categories/list`;
     } 
     // Se for um número, busca por ID
     else if (!isNaN(searchQuery)) {
-        url = `https://api-controle-de-estoque-production.up.railway.app/products/${searchQuery}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/categories/${searchQuery}`;
     } 
     // Caso contrário, busca por nome
     else {
-        url = `https://api-controle-de-estoque-production.up.railway.app/products/searchName?name=${encodeURIComponent(searchQuery)}`;
+        url = `https://api-controle-de-estoque-production.up.railway.app/categories/searchName?name=${encodeURIComponent(searchQuery)}`;
     }
 
-    // Fazendo a requisição GET para buscar os produtos
+    console.log("🔎 Buscando URL:", url); // Verificar a URL gerada
+
+    // Fazendo a requisição GET para buscar as categorias
     fetch(url, {
         method: 'GET',
         headers: {
@@ -229,22 +231,25 @@ function fetchProduct() {
         }
     })
     .then(response => {
+        console.log("📥 Resposta recebida:", response);
         if (!response.ok) {
-            throw new Error(`Erro ao buscar o produto: ${response.status}`);
+            throw new Error(`Erro ao buscar a categoria: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        // Exibe os produtos encontrados
+        console.log("✅ Dados recebidos:", data);
+        
+        // Exibe as categorias encontradas
         if (data) {
             atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
         } else {
-            showModal("Erro!","Nenhum produto encontrado!");
+            showModal("Erro!", "Nenhuma categoria encontrada!");
         }
     })
     .catch(error => {
-        console.error("Erro ao buscar produto:", error);
-        showModal("Erro!!","Erro ao tentar buscar os produtos. Tente novamente.");
+        console.error("⚠ Erro ao buscar categoria:", error);
+        showModal("Erro!!", "Erro ao tentar buscar as categorias. Tente novamente.");
     });
 }
 

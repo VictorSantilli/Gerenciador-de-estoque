@@ -144,7 +144,7 @@ function fetchSuppplier() {
     .then(data => {
         // Exibe os produtos encontrados
         if (data) {
-            atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
+            atualizarFornecedores(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
         } else {
             showModal("Erro","Nenhum supplier encontrado!");
         }
