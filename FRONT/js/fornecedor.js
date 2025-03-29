@@ -27,7 +27,7 @@ function fetchSuppliers() {
         return response.json();
     })
     .then(data => {
-        atualizarTabela(data); // Chama a função para atualizar a tabela com fornecedores
+        atualizarFornecedores(data); // Chama a função para atualizar a tabela com fornecedores
     })
     .catch(error => {
         console.error("Erro ao buscar fornecedores:", error);
@@ -35,12 +35,33 @@ function fetchSuppliers() {
     });
 }
 
-// Função para atualizar a tabela com os fornecedores
-function atualizarTabela(fornecedores) {
-    const tabela = document.getElementById("tabela-fornecedores");
-    tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
+// Variáveis para paginação
+let fornecedores = [];
+let paginaAtualFornecedores = 1;
+const itensPorPaginaFornecedores = 10;
 
-    fornecedores.forEach(fornecedor => {
+// Função para renderizar a tabela com paginação
+function renderizarTabelaFornecedores() {
+    const tabela = document.getElementById("tabela-fornecedores");
+    const spanPagina = document.getElementById("pagina-fornecedores");
+
+    if (!tabela || !spanPagina) {
+        console.error("Erro: Elementos de paginação não encontrados no DOM.");
+        return;
+    }
+
+    tabela.innerHTML = ""; // Limpa a tabela
+
+    if (fornecedores.length === 0) {
+        tabela.innerHTML = '<tr><td colspan="5">Nenhum fornecedor encontrado.</td></tr>';
+        return;
+    }
+
+    let inicio = (paginaAtualFornecedores - 1) * itensPorPaginaFornecedores;
+    let fim = inicio + itensPorPaginaFornecedores;
+    let dadosPaginados = fornecedores.slice(inicio, fim);
+
+    dadosPaginados.forEach(fornecedor => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${fornecedor.id}</td>
@@ -51,7 +72,33 @@ function atualizarTabela(fornecedores) {
         `;
         tabela.appendChild(row);
     });
+
+    spanPagina.innerText = `Página ${paginaAtualFornecedores}`;
 }
+
+// Função para atualizar a lista de fornecedores e reiniciar a paginação
+function atualizarFornecedores(novosFornecedores) {
+    fornecedores = novosFornecedores;
+    paginaAtualFornecedores = 1;  // Reseta para a primeira página
+    renderizarTabelaFornecedores();
+}
+
+// Função para navegação
+document.getElementById("btn-proximo-fornecedores")?.addEventListener("click", () => {
+    let totalPaginas = Math.ceil(fornecedores.length / itensPorPaginaFornecedores);
+    if (paginaAtualFornecedores < totalPaginas) {
+        paginaAtualFornecedores++;
+        renderizarTabelaFornecedores();
+    }
+});
+
+document.getElementById("btn-anterior-fornecedores")?.addEventListener("click", () => {
+    if (paginaAtualFornecedores > 1) {
+        paginaAtualFornecedores--;
+        renderizarTabelaFornecedores();
+    }
+});
+
 
 // Função para buscar um fornecedor por ID
 function fetchSuppplier() {

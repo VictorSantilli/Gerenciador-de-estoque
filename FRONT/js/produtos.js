@@ -8,6 +8,7 @@ function getToken() {
 }
 
 // Função para buscar a lista de produtos
+// Função para buscar a lista de produtos
 function fetchProducts() {
     const token = getToken();
     if (!token) {
@@ -30,7 +31,7 @@ function fetchProducts() {
         return response.json();
     })
     .then(data => {
-        atualizarTabela(data);
+        atualizarProdutos(data);  // Chama a função que atualiza a lista de produtos e renderiza a tabela
     })
     .catch(error => {
         console.error("Erro ao buscar produtos:", error);
@@ -38,13 +39,14 @@ function fetchProducts() {
     });
 }
 
-// Atualiza a tabela com os produtos
+
+// Declaração da função que vai atualizar a tabela
 function atualizarTabela(produtos) {
     const tabela = document.getElementById("tableListProducts-body");
     tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
 
     if (produtos.length === 0) {
-        tabela.innerHTML = '<tr><td colspan="6">Nenhum produto encontrado.</td></tr>';
+        tabela.innerHTML = '<tr><td colspan="7">Nenhum produto encontrado.</td></tr>';
         return;
     }
 
@@ -58,11 +60,82 @@ function atualizarTabela(produtos) {
             <td>${produto.quantity_min}</td>
             <td>${produto.quantity_stock}</td>
             <td>${produto.unit_of_measure}</td>
-           
         `;
         tabela.appendChild(row);
     });
 }
+
+// Variáveis para paginação
+let produtos = [];
+let paginaAtual = 1;
+const itensPorPagina = 10;
+
+// Função para renderizar a tabela
+function renderizarTabela() {
+    const tabela = document.getElementById("tableListProducts-body");
+    const spanPagina = document.getElementById("pagina-produtos");
+
+    if (!tabela || !spanPagina) {
+        console.error("Erro: Elementos de paginação não encontrados no DOM.");
+        return;
+    }
+
+    tabela.innerHTML = "";
+
+    if (produtos.length === 0) {
+        tabela.innerHTML = '<tr><td colspan="7">Nenhum produto encontrado.</td></tr>';
+        return;
+    }
+
+    let inicio = (paginaAtual - 1) * itensPorPagina;
+    let fim = inicio + itensPorPagina;
+    let dadosPaginados = produtos.slice(inicio, fim);
+
+    dadosPaginados.forEach(produto => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${produto.id}</td>
+            <td>${produto.name}</td>
+            <td>${produto.nameCategory}</td>
+            <td>${produto.description}</td>
+            <td>${produto.quantity_min}</td>
+            <td>${produto.quantity_stock}</td>
+            <td>${produto.unit_of_measure}</td>
+        `;
+        tabela.appendChild(row);
+    });
+
+    spanPagina.innerText = `Página ${paginaAtual}`;
+}
+
+// Função para atualizar os produtos
+function atualizarProdutos(novosProdutos) {
+    produtos = novosProdutos;
+    paginaAtual = 1;
+    renderizarTabela();
+}
+
+// Função para navegação (próxima e anterior)
+document.getElementById("btn-proximo-produtos")?.addEventListener("click", () => {
+    let totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+    if (paginaAtual < totalPaginas) {
+        paginaAtual++;
+        renderizarTabela();
+    }
+});
+
+document.getElementById("btn-anterior-produtos")?.addEventListener("click", () => {
+    if (paginaAtual > 1) {
+        paginaAtual--;
+        renderizarTabela();
+    }
+});
+
+// Supondo que você tenha a lógica para buscar e atualizar a lista de produtos
+// Exemplo de como atualizar os produtos (chame essa função quando buscar os dados)
+// atualizarProdutos(novosProdutos);
+
+
 
 // Função para cadastrar um novo produto
 function createProduct(event) {

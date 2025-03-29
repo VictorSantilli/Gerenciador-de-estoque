@@ -62,20 +62,33 @@ function fetchStock() {
 }
 
 // Atualiza a tabela com as notas de entrada e saída
-function atualizarTabelaPage(lancamentos) {
+let lancamentos = []; // Array que armazenará os lançamentos recebidos
+let paginaAtual = 1;
+const itensPorPagina = 20;
+
+// Atualiza a tabela com paginação
+function atualizarTabelaPage(novosLancamentos) {
+    lancamentos = novosLancamentos; // Atualiza os dados
+    paginaAtual = 1; // Reinicia a página para a primeira
+    renderizarTabela();
+}
+
+// Renderiza os lançamentos paginados
+function renderizarTabela() {
     const tabela = document.getElementById("tabela-lancamento");
-    tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
+    tabela.innerHTML = ""; // Limpa a tabela
 
     if (lancamentos.length === 0) {
         tabela.innerHTML = '<tr><td colspan="6">Nenhum produto encontrado.</td></tr>';
         return;
     }
 
-    lancamentos.forEach(lancamento => {
-        // Verificar se a data existe e é válida (para entradas ou saídas)
-        const data = new Date(lancamento.outputDate || lancamento.issueDate); // Pode ser de entrada ou saída
-        
-        // Verifique se a data é válida
+    let inicio = (paginaAtual - 1) * itensPorPagina;
+    let fim = inicio + itensPorPagina;
+    let dadosPaginados = lancamentos.slice(inicio, fim);
+
+    dadosPaginados.forEach(lancamento => {
+        const data = new Date(lancamento.outputDate || lancamento.issueDate);
         const dataFormatada = isNaN(data.getTime()) ? "Data inválida" : new Intl.DateTimeFormat('pt-BR', {
             day: '2-digit',
             month: '2-digit',
@@ -85,32 +98,42 @@ function atualizarTabelaPage(lancamentos) {
             second: '2-digit'
         }).format(data);
 
-        // Verifique se é uma entrada ou saída e atribua os valores corretamente
-        let tipoMovimento = "Entrada"; // Default para "Entrada"
-        let numeroMovimento = lancamento.invoiceNumber; // Para entradas
-        let nomeFornecedor = lancamento.supplierName; // Para entradas
-        let valorMovimento = lancamento.totalAmount; // Para entradas
-
-        // Se for saída, ajuste as variáveis
-        if (lancamento.outputDate) {
-            tipoMovimento = "Saída";
-            numeroMovimento = lancamento.id;; // Para saídas não temos um número de nota
-            nomeFornecedor = "N/A"; // Para saídas, não tem fornecedor
-            valorMovimento = "N/A"; // Para saídas, podemos não ter um valor total diretamente
-        }
+        let tipoMovimento = lancamento.outputDate ? "Saída" : "Entrada";
+        let numeroMovimento = lancamento.outputDate ? lancamento.id : lancamento.invoiceNumber;
+        let nomeFornecedor = lancamento.outputDate ? "N/A" : lancamento.supplierName;
+        let valorMovimento = lancamento.outputDate ? "N/A" : `R$ ${lancamento.totalAmount.toFixed(2)}`;
 
         const row = document.createElement("tr");
         row.innerHTML = `
-
-            <td>${tipoMovimento}</td> <!-- Mostra "Entrada" ou "Saída" -->
-            <td>${numeroMovimento || "N/A"}</td> <!-- Número da nota ou saída -->
-            <td>${nomeFornecedor}</td> <!-- Nome do fornecedor (ou N/A para saídas) -->
+            <td>${tipoMovimento}</td>
+            <td>${numeroMovimento || "N/A"}</td>
+            <td>${nomeFornecedor}</td>
             <td>${dataFormatada}</td>
-            <td>${valorMovimento === "N/A" ? "N/A" : `R$ ${valorMovimento.toFixed(2)}`}</td> <!-- Valor total (ou N/A para saídas) -->
+            <td>${valorMovimento}</td>
         `;
         tabela.appendChild(row);
     });
+
+    document.getElementById("pagina-atual").innerText = `Página ${paginaAtual}`;
 }
+
+// Função para avançar página
+document.getElementById("btn-proximo").addEventListener("click", () => {
+    let totalPaginas = Math.ceil(lancamentos.length / itensPorPagina);
+    if (paginaAtual < totalPaginas) {
+        paginaAtual++;
+        renderizarTabela();
+    }
+});
+
+// Função para voltar página
+document.getElementById("btn-anterior").addEventListener("click", () => {
+    if (paginaAtual > 1) {
+        paginaAtual--;
+        renderizarTabela();
+    }
+});
+
 
 // Função para cadastrar um novo lançamento (entrada ou saída)
 

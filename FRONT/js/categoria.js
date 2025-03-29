@@ -36,11 +36,32 @@ function fetchCategories() {
     });
 }
 
-function atualizarTabela(categorias) {
+let categorias = []; // Array para armazenar as categorias
+let paginaAtual = 1;
+const itensPorPagina = 10;
+
+// Atualiza a tabela e reseta para a primeira página
+function atualizarTabela(novasCategorias) {
+    categorias = novasCategorias;
+    paginaAtual = 1;
+    renderizarTabela();
+}
+
+// Renderiza a tabela com paginação
+function renderizarTabela() {
     const tabela = document.getElementById("tabela-categorias");
     tabela.innerHTML = "";
 
-    categorias.forEach(categoria => {
+    if (categorias.length === 0) {
+        tabela.innerHTML = '<tr><td colspan="3">Nenhuma categoria encontrada.</td></tr>';
+        return;
+    }
+
+    let inicio = (paginaAtual - 1) * itensPorPagina;
+    let fim = inicio + itensPorPagina;
+    let dadosPaginados = categorias.slice(inicio, fim);
+
+    dadosPaginados.forEach(categoria => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${categoria.id}</td>
@@ -49,7 +70,27 @@ function atualizarTabela(categorias) {
         `;
         tabela.appendChild(row);
     });
+
+    document.getElementById("pagina-categorias").innerText = `Página ${paginaAtual}`;
 }
+
+// Função para avançar página
+document.getElementById("btn-proximo-categorias").addEventListener("click", () => {
+    let totalPaginas = Math.ceil(categorias.length / itensPorPagina);
+    if (paginaAtual < totalPaginas) {
+        paginaAtual++;
+        renderizarTabela();
+    }
+});
+
+// Função para voltar página
+document.getElementById("btn-anterior-categorias").addEventListener("click", () => {
+    if (paginaAtual > 1) {
+        paginaAtual--;
+        renderizarTabela();
+    }
+});
+
 
 
 
