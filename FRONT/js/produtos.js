@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetchProducts();// Carrega os produtos ao iniciar a página
+    fetchProduct();// Carrega os produtos ao iniciar a página
 });
 
 // Recupera o token armazenado no localStorage
@@ -7,41 +7,69 @@ function getToken() {
     return localStorage.getItem('authToken');
 }
 
-// Função para buscar a lista de produtos
-// Função para buscar a lista de produtos
-function fetchProducts() {
-    const token = getToken();
+function fetchProduct() {
+    const searchQuery = document.getElementById('input-busca').value.trim(); // Obtém o valor inserido
+
+    // Recupera o token de autenticação do localStorage
+    const token = localStorage.getItem('authToken');
     if (!token) {
-        showModal("Token expirado!","Sessão expirada! Faça login novamente.");
-        window.location.href = "index.html";
+        console.error("Token não encontrado. Faça login novamente.");
+        showModal("Token Expirado!","Sessão expirada! Faça login novamente.");
+        window.location.href = "index.html"; // Redireciona para login se o token não existir
         return;
     }
 
-    fetch("https://api-controle-de-estoque-production.up.railway.app/products/list", {
-        method: "GET",
+    let url;
+    // Se o campo estiver vazio, busca todos os produtos
+    if (!searchQuery) {
+        url = `https://api-controle-de-estoque-production.up.railway.app/products/list`;
+    } 
+    // Se for um número, busca por ID
+    else if (!isNaN(searchQuery)) {
+        url = `https://api-controle-de-estoque-production.up.railway.app/products/${searchQuery}`;
+    } 
+    // Caso contrário, busca por nome
+    else {
+        url = `https://api-controle-de-estoque-production.up.railway.app/products/searchName?name=${encodeURIComponent(searchQuery)}`;
+    }
+
+    // Fazendo a requisição GET para buscar os produtos
+    fetch(url, {
+        method: 'GET',
         headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
         }
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status}`);
+            throw new Error(`Erro ao buscar o produto: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        atualizarTabela(data);  // Chama a função que atualiza a lista de produtos e renderiza a tabela
+        // Exibe os produtos encontrados
+        if (data) {
+            atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
+        } else {
+            showModal("Erro!","Nenhum produto encontrado!");
+        }
     })
     .catch(error => {
-        console.error("Erro ao buscar produtos:", error);
-        showModal("Erro!!","Erro ao carregar produtos. Tente novamente.");
+        console.error("Erro ao buscar produto:", error);
+        showModal("Erro!!","Erro ao tentar buscar os produtos. Tente novamente.");
     });
 }
 
 
-// Declaração da função que vai atualizar a tabela
-function atualizarTabela(produtos) {
+
+let paginaAtual = 1; // Página inicial
+const produtosPorPagina = 10; // Número de produtos por página
+let produtos = []; // Variável global para armazenar os produtos
+
+function atualizarTabela(produtosRecebidos) {
+    produtos = produtosRecebidos; // Armazena os produtos recebidos na variável global
+
     const tabela = document.getElementById("tableListProducts-body");
     tabela.innerHTML = ""; // Limpa a tabela antes de atualizar
 
@@ -50,48 +78,16 @@ function atualizarTabela(produtos) {
         return;
     }
 
-    produtos.forEach(produto => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${produto.id}</td>
-            <td>${produto.name}</td>
-            <td>${produto.nameCategory}</td>
-            <td>${produto.description}</td>
-            <td>${produto.quantity_min}</td>
-            <td>${produto.quantity_stock}</td>
-            <td>${produto.unit_of_measure}</td>
-        `;
-        tabela.appendChild(row);
-    });
-}
+    // Calcula o total de páginas
+    const totalPaginas = Math.ceil(produtos.length / produtosPorPagina);
 
-// Variáveis para paginação
-let produtos = [];
-let paginaAtual = 1;
-const itensPorPagina = 10;
+    // Divide os produtos conforme a página atual
+    const inicio = (paginaAtual - 1) * produtosPorPagina;
+    const fim = inicio + produtosPorPagina;
+    const produtosPagina = produtos.slice(inicio, fim);
 
-// Função para renderizar a tabela
-function renderizarTabela() {
-    const tabela = document.getElementById("tableListProducts-body");
-    const spanPagina = document.getElementById("pagina-produtos");
-
-    if (!tabela || !spanPagina) {
-        console.error("Erro: Elementos de paginação não encontrados no DOM.");
-        return;
-    }
-
-    tabela.innerHTML = "";
-
-    if (produtos.length === 0) {
-        tabela.innerHTML = '<tr><td colspan="7">Nenhum produto encontrado.</td></tr>';
-        return;
-    }
-
-    let inicio = (paginaAtual - 1) * itensPorPagina;
-    let fim = inicio + itensPorPagina;
-    let dadosPaginados = produtos.slice(inicio, fim);
-
-    dadosPaginados.forEach(produto => {
+    // Exibe os produtos na página atual
+    produtosPagina.forEach(produto => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${produto.id}</td>
@@ -105,37 +101,34 @@ function renderizarTabela() {
         tabela.appendChild(row);
     });
 
-    spanPagina.innerText = `Página ${paginaAtual}`;
+    // Atualiza a paginação
+    atualizarPaginacao(totalPaginas);
 }
 
-// Função para atualizar os produtos
-function atualizarProdutos(novosProdutos) {
-    produtos = novosProdutos;
-    paginaAtual = 1;
-    renderizarTabela();
+function atualizarPaginacao(totalPaginas) {
+    const btnAnterior = document.getElementById("btn-anterior-produtos");
+    const btnProximo = document.getElementById("btn-proximo-produtos");
+    const paginaTexto = document.getElementById("pagina-produtos");
+
+    // Atualiza o texto da página
+    paginaTexto.innerText = `Página ${paginaAtual} de ${totalPaginas}`;
+
+    // Habilita ou desabilita os botões de navegação
+    btnAnterior.disabled = paginaAtual === 1;
+    btnProximo.disabled = paginaAtual === totalPaginas;
+
+    // Adiciona os eventos de navegação
+    btnAnterior.onclick = () => mudarPagina(paginaAtual - 1);
+    btnProximo.onclick = () => mudarPagina(paginaAtual + 1);
 }
 
-// Função para navegação (próxima e anterior)
-document.getElementById("btn-proximo-produtos")?.addEventListener("click", () => {
-    let totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-    if (paginaAtual < totalPaginas) {
-        paginaAtual++;
-        renderizarTabela();
+function mudarPagina(novaPagina) {
+    const totalPaginas = Math.ceil(produtos.length / produtosPorPagina);
+    if (novaPagina >= 1 && novaPagina <= totalPaginas) {
+        paginaAtual = novaPagina;
+        fetchProduct(); // Recarrega os produtos com a nova página
     }
-});
-
-document.getElementById("btn-anterior-produtos")?.addEventListener("click", () => {
-    if (paginaAtual > 1) {
-        paginaAtual--;
-        renderizarTabela();
-    }
-});
-
-// Supondo que você tenha a lógica para buscar e atualizar a lista de produtos
-// Exemplo de como atualizar os produtos (chame essa função quando buscar os dados)
-// atualizarProdutos(novosProdutos);
-
-
+}
 
 // Função para cadastrar um novo produto
 function createProduct(event) {
@@ -193,65 +186,6 @@ function createProduct(event) {
     });
 }
 
-// Função para buscar categoria pelo ID
-function fetchCategory() {
-    const searchQuery = document.getElementById('input-busca').value.trim(); // Obtém o valor inserido
-
-    // Recupera o token de autenticação do localStorage
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        console.error("Token não encontrado. Faça login novamente.");
-        showModal("Token Expirado!", "Sessão expirada! Faça login novamente.");
-        window.location.href = "index.html"; // Redireciona para login se o token não existir
-        return;
-    }
-
-    let url;
-    // Se o campo estiver vazio, busca todas as categorias
-    if (!searchQuery) {
-        url = `https://api-controle-de-estoque-production.up.railway.app/categories/list`;
-    } 
-    // Se for um número, busca por ID
-    else if (!isNaN(searchQuery)) {
-        url = `https://api-controle-de-estoque-production.up.railway.app/categories/${searchQuery}`;
-    } 
-    // Caso contrário, busca por nome
-    else {
-        url = `https://api-controle-de-estoque-production.up.railway.app/categories/searchName?name=${encodeURIComponent(searchQuery)}`;
-    }
-
-    console.log("🔎 Buscando URL:", url); // Verificar a URL gerada
-
-    // Fazendo a requisição GET para buscar as categorias
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        console.log("📥 Resposta recebida:", response);
-        if (!response.ok) {
-            throw new Error(`Erro ao buscar a categoria: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("✅ Dados recebidos:", data);
-        
-        // Exibe as categorias encontradas
-        if (data) {
-            atualizarTabela(Array.isArray(data) ? data : [data]); // Garante que a função recebe um array
-        } else {
-            showModal("Erro!", "Nenhuma categoria encontrada!");
-        }
-    })
-    .catch(error => {
-        console.error("⚠ Erro ao buscar categoria:", error);
-        showModal("Erro!!", "Erro ao tentar buscar as categorias. Tente novamente.");
-    });
-}
 
 //Formulário
 async function carregarCategorias() {
