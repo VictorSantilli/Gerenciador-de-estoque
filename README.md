@@ -1,76 +1,70 @@
-Aqui está o texto revisado e formatado para o **README** do GitHub:
+# SmartStock: Gerenciador de Estoque
 
----
+Front-end do **SmartStock**, um sistema web de controle de estoque desenvolvido como projeto acadêmico na UNIP.
+A aplicação consome a API REST do projeto [API-controle-de-estoque](https://github.com/VictorSantilli/API-controle-de-estoque) (Java / Spring Boot + MySQL).
 
-# Documentação para Rodar o Aplicativo Web
+## Funcionalidades
 
-## Instalando o MySQL
+- **Login e cadastro** de usuários (autenticação via API)
+- **Produtos**: cadastro, listagem e busca
+- **Categorias** e **fornecedores** (com endereço)
+- **Movimentações**: lançamento de notas de entrada e registro de saídas de estoque
+- **Home** com acesso aos módulos do sistema
+- Manual do usuário em PDF (`FRONT/img/SS - Manual do usuário.pdf`)
 
-1. **MySQL Installer**:
-   - Execute o arquivo `.exe`.
-   - Na aba **Setup Type**, selecione a opção **Server only**.
-   - Clique em **Next** até a parte de configuração.
-   - Em **Configuration**, selecione **Development Computer** e clique em **Next**.
-   - Em **Authentication Method**, selecione **Use Strong Password Encryption** e clique em **Next**.
-   - Crie uma senha para utilizar posteriormente na conexão e clique em **Next**.
-   - Em **Apply Configuration**, clique em **Execute**. Quando terminar, clique em **Finish**.
+## Tecnologias
 
-2. **MySQL Workbench Installer**:
-   - Execute o instalador do MySQL Workbench.
-   - Siga as opções padrão até o final.
+- HTML5, CSS3 e JavaScript (sem frameworks)
+- Consumo de API REST com `fetch`
+- Back-end: Java + Spring Boot + MySQL (repositório separado)
 
-## Iniciando o MySQL
+## Estrutura
 
-1. Pesquise no computador por **MySQL 8.0 Command Line Client**.
-2. Execute o **MySQL 8.0 Command Line Client**.
-3. Digite a senha registrada na instalação do MySQL.
-4. Após a autenticação, pode fechar o CLI.
+```
+FRONT/
+├── index.html          # login
+├── cadastro.html       # cadastro de usuário
+├── home.html           # página inicial
+├── produtos.html
+├── categorias.html
+├── fornecedores.html
+├── lancamento.html     # movimentações de estoque
+├── navbar.html         # barra de navegação carregada nas páginas
+├── CSS/
+├── js/                 # um script por página
+└── img/
+```
 
-## Configurando o MySQL Workbench
+## Como executar
 
-1. Abra o **MySQL Workbench**. Você verá a conexão **Local instance MySQL80**.
-2. Clique nessa conexão para estabelecer a conexão, e insira a senha que você registrou durante a instalação.
-3. No painel de comandos, digite o seguinte comando:
+### 1. Banco de dados (MySQL)
+
+1. Instale o **MySQL Server 8** (opção *Server only*, configuração *Development Computer*) e o **MySQL Workbench**.
+2. No Workbench, conecte em *Local instance MySQL80* e crie o banco:
    ```sql
    CREATE DATABASE controle_estoque;
    ```
-4. No painel à esquerda, em **Administration** e **Schemas**, clique em **Schemas**.
-5. No painel da direita, clique nas setas de atualização para verificar se o banco de dados **controle_estoque** foi criado corretamente.
-6. Se o banco de dados aparecer, você pode fechar o MySQL Workbench.
 
-## Clonando o Repositório
+### 2. API
 
-1. Navegue até o diretório onde deseja clonar o projeto. Por exemplo:
-   ```bash
-   cd ~/Documents/IA 5º SEM
-   ```
+```bash
+git clone -b SmartStock https://github.com/VictorSantilli/API-controle-de-estoque.git
+```
 
-2. Clone o repositório da API (branch `SmartStock`):
-   ```bash
-   git clone -b SmartStock https://github.com/VictorSantilli/API-controle-de-estoque.git
-   ```
+Em `api_controle_estoque/api_controle_estoque/src/main/resources`, configure a senha do banco no arquivo de propriedades:
 
-3. Para clonar o repositório que contém o front-end, execute:
-   ```bash
-   git clone https://github.com/VictorSantilli/Gerenciador-de-estoque.git
-   ```
+```properties
+spring.datasource.password=<SUA_SENHA>
+```
 
-## Rodando a API
+Depois rode a aplicação Spring Boot pela sua IDE.
 
-1. Abra o código em uma IDE e navegue até o diretório:
-   ```
-   C:\Users\victo\Documents\IA 5º SEM\API-controle-de-estoque\api_controle_estoque\api_controle_estoque\src\main\resources
-   ```
+### 3. Front-end
 
-2. Abra o arquivo de configuração e adicione a senha do banco de dados no campo:
-   ```properties
-   spring.datasource.password=<SUA_SENHA>
-   ```
+```bash
+git clone https://github.com/VictorSantilli/Gerenciador-de-estoque.git
+```
 
-   **Nota**: Este é apenas um ajuste para testes iniciais. A senha será alterada posteriormente.
+Abra `FRONT/index.html` no navegador, de preferência com uma extensão como o *Live Server* do VS Code, já que a navbar é carregada via `fetch`.
 
-3. Tente rodar o código. Se tudo estiver correto, a página de login do front-end será carregada.
-
----
-
-Espero que isso ajude! Se precisar de mais alguma coisa, é só avisar.
+> Os scripts em `FRONT/js` apontam para a API publicada no Railway (`https://api-controle-de-estoque-production.up.railway.app`). Para usar a API local, troque essa URL pelo endereço local da API (por padrão, `http://localhost:8080` no Spring Boot).
